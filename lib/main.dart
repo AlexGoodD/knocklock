@@ -1,143 +1,120 @@
-import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'imports.dart';
 
 void main() {
-  runApp(MaterialApp(home: WifiSenderApp()));
+  runApp(MaterialApp(
+    home: LockListScreen(),
+    theme: ThemeData(
+      scaffoldBackgroundColor: AppColors.background,
+      textTheme: TextTheme(
+        bodyLarge: AppTextStyles.primaryTextStyle,
+        bodyMedium: AppTextStyles.secondaryTextStyle,
+      ),
+    ),
+  ));
 }
 
-class WifiSenderApp extends StatefulWidget {
+class LockListScreen extends StatefulWidget {
   @override
-  State<WifiSenderApp> createState() => _WifiSenderAppState();
+  State<LockListScreen> createState() => _LockListScreenState();
 }
 
-class _WifiSenderAppState extends State<WifiSenderApp> {
-  WebSocketChannel? channel;
-  TextEditingController textController = TextEditingController();
+class _LockListScreenState extends State<LockListScreen> {
+  List<Lock> locks = [];
+
+  TextEditingController nameController = TextEditingController();
   TextEditingController ipController = TextEditingController();
-  bool isConnected = false;
 
-  final String wsEndpoint = "/ws";
+  void addLock() {
+    final String name = nameController.text;
+    final String ip = ipController.text;
 
-  void connectToESP32() {
-    final String esp32Ip = ipController.text;
-    final url = 'ws://$esp32Ip$wsEndpoint';
-
-    // Close the previous connection if it exists
-    if (channel != null) {
-      channel!.sink.close();
+    if (name.isNotEmpty && ip.isNotEmpty) {
       setState(() {
-        isConnected = false;
+        locks.add(Lock(name: name, ip: ip));
       });
-    }
 
-    try {
-      final tempChannel = WebSocketChannel.connect(Uri.parse(url));
-
-      tempChannel.stream.listen(
-            (message) {
-          print("Mensaje recibido: $message");
-          if (message.toString().trim() == "CONNECTED") {
-            setState(() {
-              channel = tempChannel;
-              isConnected = true;
-            });
-          }
-        },
-        onError: (error) {
-          print("Error al escuchar WebSocket: $error");
-          setState(() {
-            isConnected = false;
-          });
-        },
-      );
-    } catch (e) {
-      print("Error al conectar: $e");
-      setState(() {
-        isConnected = false;
-      });
+      nameController.clear();
+      ipController.clear();
+      Navigator.of(context).pop(); // Close the dialog
     }
   }
 
-  void sendText(String text) {
-    if (isConnected && text.isNotEmpty) {
-      channel!.sink.add(text);
-      textController.clear();
-    }
+  void showAddLockDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Agregar Candado"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: "Nombre del Candado"),
+                  style: AppTextStyles.secondaryTextStyle
+              ),
+              TextField(
+                controller: ipController,
+                decoration: InputDecoration(labelText: "IP del Candado"),
+                  style: AppTextStyles.secondaryTextStyle
+
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: addLock,
+              child: Text("Agregar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  @override
-  void dispose() {
-    if (isConnected) {
-      channel!.sink.close();
-    }
-    super.dispose();
+  void navigateToDetail(Lock lock) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LockDetailScreen(lock: lock),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(
-          "Knock Lock",
-          style: TextStyle(color: Color(0xFFEEF3CB)),
-        ),
-        backgroundColor: Colors.black,
+        title: Text("KnockLock"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: showAddLockDialog,
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: ipController,
-              decoration: InputDecoration(
-                labelText: "IP del ESP32",
-                labelStyle: TextStyle(color: Colors.white),
-              ),
-              style: TextStyle(color: Colors.white),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: locks.length,
+              itemBuilder: (context, index) {
+                final lock = locks[index];
+                return ListTile(
+                  title: Text(lock.name),
+                  subtitle: Text(lock.ip),
+                  onTap: () => navigateToDetail(lock),
+                );
+              },
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: connectToESP32,
-              child: Text("Conectar"),
-            ),
-            SizedBox(height: 20),
-            Text(
-              "Conexión: ${isConnected ? "Conectado" : "Desconectado"}",
-              style: TextStyle(color: Colors.white),
-            ),
-            TextField(
-              controller: textController,
-              decoration: InputDecoration(
-                labelText: "Texto a enviar",
-                labelStyle: TextStyle(color: Colors.white),
-              ),
-              style: TextStyle(color: Colors.white),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: isConnected ? () => sendText(textController.text) : null,
-              child: Text("Enviar"),
-            ),
-            Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: isConnected ? () => sendText("Iniciando grabación") : null,
-                  icon: Icon(Icons.mic),
-                  label: Text(""),
-                ),
-                SizedBox(width: 20),
-                ElevatedButton.icon(
-                  onPressed: isConnected ? () => sendText("Iniciando verificación") : null,
-                  icon: Icon(Icons.lock),
-                  label: Text(""),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
