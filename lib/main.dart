@@ -4,6 +4,7 @@ void main() {
   runApp(MaterialApp(
     home: LockListScreen(),
     theme: ThemeData(
+      fontFamily: 'Roboto',
       scaffoldBackgroundColor: AppColors.background,
       textTheme: TextTheme(
         bodyLarge: AppTextStyles.primaryTextStyle,
@@ -14,6 +15,8 @@ void main() {
 }
 
 class LockListScreen extends StatefulWidget {
+  const LockListScreen({super.key});
+
   @override
   State<LockListScreen> createState() => _LockListScreenState();
 }
@@ -35,7 +38,7 @@ class _LockListScreenState extends State<LockListScreen> {
 
       nameController.clear();
       ipController.clear();
-      Navigator.of(context).pop(); // Close the dialog
+      Navigator.of(context).pop();
     }
   }
 
@@ -43,36 +46,10 @@ class _LockListScreenState extends State<LockListScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Agregar Candado"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: "Nombre del Candado"),
-                  style: AppTextStyles.secondaryTextStyle
-              ),
-              TextField(
-                controller: ipController,
-                decoration: InputDecoration(labelText: "IP del Candado"),
-                  style: AppTextStyles.secondaryTextStyle
-
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancelar"),
-            ),
-            ElevatedButton(
-              onPressed: addLock,
-              child: Text("Agregar"),
-            ),
-          ],
+        return CreateDialog(
+          nameController: nameController,
+          ipController: ipController,
+          onAdd: addLock,
         );
       },
     );
@@ -91,13 +68,9 @@ class _LockListScreenState extends State<LockListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("KnockLock"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: showAddLockDialog,
-          ),
-        ],
+        title: Text("Knock Lock", style: AppTextStyles.appBarTextStyle),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -106,15 +79,42 @@ class _LockListScreenState extends State<LockListScreen> {
               itemCount: locks.length,
               itemBuilder: (context, index) {
                 final lock = locks[index];
-                return ListTile(
-                  title: Text(lock.name),
-                  subtitle: Text(lock.ip),
-                  onTap: () => navigateToDetail(lock),
-                );
+                return LockItem(name: lock.name, ip: lock.ip, lock: lock);
               },
             ),
           ),
         ],
+      ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: FloatingActionButton(
+          onPressed: showAddLockDialog,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.0),
+          ),
+          backgroundColor: AppColors.buttonBackground,
+          foregroundColor: Colors.black,
+          child: Icon(Icons.add),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class LockDetailScreen extends StatelessWidget {
+  final Lock lock;
+
+  const LockDetailScreen({super.key, required this.lock});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(lock.name),
+      ),
+      body: Center(
+        child: Text('IP: ${lock.ip}'),
       ),
     );
   }

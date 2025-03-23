@@ -71,13 +71,13 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.backgroundDetail,
       appBar: AppBar(
         title: Text(
           widget.lock.name,
-          style: AppTextStyles.primaryTextStyle,
+          style: AppTextStyles.appBarSecondaryTextStyle,
         ),
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -125,30 +125,38 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                 GestureDetector(
                   onTapDown: (_) => sendText("START_GRABACION"),
                   onTapUp: (_) => sendText("STOP_GRABACION"),
-                  child: ElevatedButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.mic),
-                    label: Text(""),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonBackground,
+                  child: Container(
+                    width: 100.0,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: IconButton(
+                      onPressed: null,
+                      icon: Icon(Icons.mic, color: Colors.black, size: 30),
                     ),
                   ),
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 50),
+
                 GestureDetector(
                   onTapDown: (_) => sendText("START_VERIFICACION"),
                   onTapUp: (_) => sendText("STOP_VERIFICACION"),
-                  child: ElevatedButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.lock),
-                    label: Text(""),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonBackground,
+                  child: Container(
+                    width: 100.0,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: IconButton(
+                      onPressed: null,
+                      icon: Icon(Icons.lock, color: Colors.black, size: 30,),
                     ),
                   ),
-                ),
+                )
               ],
             ),
+            SizedBox(height: 50),
           ],
         ),
       ),

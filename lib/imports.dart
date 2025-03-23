@@ -15,3 +15,7 @@ export 'package:knocklock_flutter/colors.dart';
 
 //Services
 export 'package:knocklock_flutter/services/websocket_service.dart';
+
+//Widgets
+export 'package:knocklock_flutter/widgets/lock_item.dart';
+export 'package:knocklock_flutter/widgets/create_dialog.dart';
