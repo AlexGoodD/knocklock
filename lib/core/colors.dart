@@ -6,6 +6,14 @@ class AppColors {
   static const Color backgroundHelperColor = Color(0xFFFFFFFF);
   static const Color primaryColor = Color(0xFF000000);
   static const Color secondaryColor = Color(0xFF939393);
+  static const Color errorTextColor = Color(0xFFFE7474);
+  static const Color errorBackgroundColor = Color(0xFFFFEDED);
+  static const Color successTextColor = Color(0xFF00AA28);
+  static const Color successBackgroundColor = Color(0xFFEDFFEF);
+
+
+
+
 
   // Viejos colores
   static const Color backgroundDetail = Color(0xFFEEF3CB);
@@ -30,8 +38,15 @@ class AppTextStyles {
   static const TextStyle HelperPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle HelperSecondaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
-  static const TextStyle sectionPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
-  static const TextStyle sectionSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
+  static const TextStyle sectionPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 22);
+  static const TextStyle sectionSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 15);
+
+  static const TextStyle HelperItemsPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
+  static const TextStyle HelperItemsSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
+
+
+
+
 
   // Viejos estilos
   static const TextStyle appBarTextStyle = TextStyle(color: AppColors.primaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 27);

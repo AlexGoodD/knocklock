@@ -29,6 +29,7 @@ export 'package:knocklock_flutter/widgets/bottom_bar.dart';
 export 'package:knocklock_flutter/widgets/button_add_lock.dart';
 export 'package:knocklock_flutter/widgets/latest_log_access.dart';
 export 'package:knocklock_flutter/widgets/log_item.dart';
+export 'package:knocklock_flutter/widgets/status_log.dart';
 
 //Navigator
 export 'package:knocklock_flutter/navigation/main_navigator.dart';
