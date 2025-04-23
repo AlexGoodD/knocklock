@@ -85,21 +85,46 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 80),
           // Boton modal y perfil de usuario
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  onPressed: toggleAllItemsView,
-                  icon: Icon(
-                    isExpanded ? Icons.arrow_back : Icons.apps,
+                Material(
+                  color: Colors.transparent,
+                  child: InkResponse(
+                    onTap: () {
+                      if (!isExpanded) {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (context) => const QuickAccessModal(),
+                        );
+                      } else {
+                        toggleAllItemsView();
+                      }
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    radius: 24,
+                    child: Icon(
+                      isExpanded ? Icons.arrow_back : Icons.apps,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
-                  color: AppColors.primaryColor,
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.account_circle_outlined),
-                  color: AppColors.primaryColor,
+                Material(
+                  color: Colors.transparent,
+                  child: InkResponse(
+                    onTap: () {},
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    radius: 24,
+                    child: const Icon(
+                      Icons.account_circle_outlined,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
                 ),
               ],
             ),

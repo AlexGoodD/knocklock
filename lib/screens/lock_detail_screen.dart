@@ -208,83 +208,154 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundDetail,
-      appBar: AppBar(
-        title: Text(
-          widget.lock.name,
-          style: AppTextStyles.appBarSecondaryTextStyle,
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.backgroundTop,
+            AppColors.backgroundBottom,
+          ],
         ),
-        backgroundColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+    child: Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("IP: ${widget.lock.ip}", style: AppTextStyles.secondaryTextStyle),
-            SizedBox(height: 20),
-
-            TextField(
-              controller: textController,
-              decoration: InputDecoration(
-                labelText: "Texto a enviar",
-                labelStyle: AppTextStyles.secondaryTextStyle,
-              ),
+            SizedBox(height: 10),
+            Text(
+              widget.lock.name,
+              style: AppTextStyles.primaryTextStyle,
+            ),
+            SizedBox(height: 5),
+            Text(
+              widget.lock.ip,
               style: AppTextStyles.secondaryTextStyle,
             ),
-
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: isConnected ? () => sendText(textController.text) : null,
-              child: Text("Enviar"),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonBackground),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                // Acción futura
+              },
             ),
-
-            if (estadoVerificacion.isNotEmpty)
-              Container(
-                margin: EdgeInsets.only(bottom: 20),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: colorEstado,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  estadoVerificacion,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 35.0),
+        child: Column(
+          children: [
 
             Spacer(),
-
-            SizedBox(height: 10),
-
+            Container(
+              height: 220.0,
+              width: 220.0,
+              decoration: BoxDecoration(
+                color: AppColors.backgroundHelperColor,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 80,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock,
+                    color: Colors.black,
+                    size: 60.0,
+                  ),
+                  SizedBox(height: 12), // Espacio entre el icono y el texto
+                  Text(
+                    "Estado del\nDispositivo",
+                    style: AppTextStyles.secondaryTextStyle.copyWith(color: AppColors.primaryColor),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Modo activo",
+                  style: AppTextStyles.secondaryModalStyle,
+                ),
+                Text(
+                  "TÁCTIL",
+                  style: AppTextStyles.primaryTextStyle,
+                )
+              ],
+            ),
+            const SizedBox(height: 45),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton.icon(
-                  onPressed: isConnected ? generarPatronAleatorio : null,
-                  icon: Icon(Icons.shuffle),
-                  label: Text("Generar"),
+                ModeButton(
+                  icon: Icons.back_hand,
+                  label: "TÁCTIL",
+                  onTap: isConnected ? reproducirPatron : null,
+                ),
+                ModeButton(
+                  icon: Icons.password,
+                  label: "CLAVE",
+                  onTap: isConnected ? pausarReproduccion : null,
+                ),
+                ModeButton(
+                  icon: Icons.shuffle,
+                  label: "TOKEN",
+                  onTap: isConnected ? generarPatronAleatorio : null,
                 ),
               ],
             ),
-
-
-            SizedBox(height: 30),
+            const SizedBox(height: 100),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTapDown: (_) => sendText("START_GRABACION"),
-                  onTapUp: (_) => sendText("STOP_GRABACION"),
+                  onTapDown: (_) => sendText("START_VERIFICACION"),
+                  onTapUp: (_) => sendText("STOP_VERIFICACION"),
                   child: Container(
-                    width: 100.0,
+                    height: 70.0,
+                    width: 70.0,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(20.0),
+                      color: AppColors.secondaryBackgroundHelperColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0,0),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(100.0),
                     ),
                     child: IconButton(
                       onPressed: null,
@@ -292,29 +363,13 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 50),
-                GestureDetector(
-                  onTapDown: (_) => sendText("START_VERIFICACION"),
-                  onTapUp: (_) => sendText("STOP_VERIFICACION"),
-                  child: Container(
-                    width: 100.0,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: IconButton(
-                      onPressed: null,
-                      icon: Icon(Icons.lock, color: Colors.black, size: 30),
-                    ),
-                  ),
-                )
               ],
             ),
-
-            SizedBox(height: 50),
+            SizedBox(height: 70),
           ],
         ),
       ),
+    ),
     );
   }
 }

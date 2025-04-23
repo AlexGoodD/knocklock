@@ -4,15 +4,14 @@ class AppColors {
   static const Color backgroundTop = Color(0xFFFFFFFF);
   static const Color backgroundBottom = Color(0xFFF0F7FF);
   static const Color backgroundHelperColor = Color(0xFFFFFFFF);
+  static const Color secondaryBackgroundHelperColor = Color(0xFFFCFCFC);
   static const Color primaryColor = Color(0xFF000000);
   static const Color secondaryColor = Color(0xFF939393);
   static const Color errorTextColor = Color(0xFFFE7474);
   static const Color errorBackgroundColor = Color(0xFFFFEDED);
   static const Color successTextColor = Color(0xFF00AA28);
   static const Color successBackgroundColor = Color(0xFFEDFFEF);
-
-
-
+  static const Color HelperBorderColor = Color(0xFFEFEFEF);
 
 
   // Viejos colores
@@ -31,6 +30,7 @@ class AppColors {
 class AppTextStyles {
 
   static const TextStyle primaryTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.bold, fontSize: 22);
+  static const TextStyle secondaryTextStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 15);
 
   static const TextStyle lockItemTitleStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15);
   static const TextStyle lockItemDescriptionStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
@@ -44,6 +44,9 @@ class AppTextStyles {
   static const TextStyle HelperItemsPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle HelperItemsSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
+  static const TextStyle primaryModalStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15.5);
+  static const TextStyle secondaryModalStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
+
 
 
 
@@ -54,5 +57,4 @@ class AppTextStyles {
   static const TextStyle dialogTitleTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 25);
   static const TextStyle dialogLabelTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle dialogInputTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15);
-  static const TextStyle secondaryTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto',);
 }

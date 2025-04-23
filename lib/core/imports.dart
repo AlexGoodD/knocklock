@@ -30,9 +30,14 @@ export 'package:knocklock_flutter/widgets/button_add_lock.dart';
 export 'package:knocklock_flutter/widgets/latest_log_access.dart';
 export 'package:knocklock_flutter/widgets/log_item.dart';
 export 'package:knocklock_flutter/widgets/status_log.dart';
+export 'package:knocklock_flutter/widgets/quick_access_modal.dart';
+export 'package:knocklock_flutter/widgets/mode_button.dart';
 
 //Navigator
 export 'package:knocklock_flutter/navigation/main_navigator.dart';
+
+//Controllers
+export 'package:knocklock_flutter/controllers/lock_controller.dart';
 
 // Utils
 export 'package:vibration/vibration.dart';

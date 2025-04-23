@@ -13,7 +13,8 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(splashColor: Colors.transparent),
+      data: Theme.of(context).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onTap,
