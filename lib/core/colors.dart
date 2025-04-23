@@ -27,8 +27,11 @@ class AppTextStyles {
   static const TextStyle lockItemTitleStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15);
   static const TextStyle lockItemDescriptionStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
-  static const TextStyle HelperPrimaryStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
+  static const TextStyle HelperPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle HelperSecondaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
+
+  static const TextStyle sectionPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
+  static const TextStyle sectionSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
   // Viejos estilos
   static const TextStyle appBarTextStyle = TextStyle(color: AppColors.primaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 27);

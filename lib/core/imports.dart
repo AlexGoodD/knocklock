@@ -13,6 +13,7 @@ export 'package:knocklock_flutter/models/lock.dart';
 export 'package:knocklock_flutter/screens/home_screen.dart';
 export 'package:knocklock_flutter/screens/lock_grid_screen.dart';
 export 'package:knocklock_flutter/screens/lock_detail_screen.dart';
+export 'package:knocklock_flutter/screens/logs_screen.dart';
 
 //Colors
 export 'package:knocklock_flutter/core/colors.dart';
@@ -27,6 +28,10 @@ export 'package:knocklock_flutter/widgets/token_dialog.dart';
 export 'package:knocklock_flutter/widgets/bottom_bar.dart';
 export 'package:knocklock_flutter/widgets/button_add_lock.dart';
 export 'package:knocklock_flutter/widgets/latest_log_access.dart';
+export 'package:knocklock_flutter/widgets/log_item.dart';
+
+//Navigator
+export 'package:knocklock_flutter/navigation/main_navigator.dart';
 
 // Utils
 export 'package:vibration/vibration.dart';

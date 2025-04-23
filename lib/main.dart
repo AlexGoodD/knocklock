@@ -2,6 +2,6 @@ import 'core/imports.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: const HomeScreen(),
+    home: const MainNavigator(),
   ));
 }

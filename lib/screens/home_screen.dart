@@ -1,8 +1,8 @@
-// home_screen.dart
 import '../core/imports.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final void Function(bool isExpanded)? onExpandChange;
+  const HomeScreen({super.key, this.onExpandChange});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -13,6 +13,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ipController = TextEditingController();
+  bool isExpanded = false;
+  bool showTopSection = true;
+  bool displayTopSection = true;
 
   void addLock() {
     final name = nameController.text;
@@ -42,99 +45,130 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void toggleAllItemsView() async {
+    if (!isExpanded) {
+      setState(() {
+        showTopSection = false;
+      });
+
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      setState(() {
+        displayTopSection = false;
+        isExpanded = true;
+      });
+
+      widget.onExpandChange?.call(true); // <- Notifica a MainNavigator
+    } else {
+      setState(() {
+        displayTopSection = true;
+      });
+
+      await Future.delayed(const Duration(milliseconds: 16));
+
+      setState(() {
+        showTopSection = true;
+        isExpanded = false;
+      });
+
+      widget.onExpandChange?.call(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.backgroundTop,
-              AppColors.backgroundBottom,
-            ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 80),
+          // Boton modal y perfil de usuario
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: toggleAllItemsView,
+                  icon: Icon(
+                    isExpanded ? Icons.arrow_back : Icons.apps,
+                  ),
+                  color: AppColors.primaryColor,
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.account_circle_outlined),
+                  color: AppColors.primaryColor,
+                ),
+              ],
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 80),
-            // Boton modal y perfil de usuario
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.apps),
-                    color: AppColors.primaryColor,
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.account_circle_outlined),
-                    color: AppColors.primaryColor,
-                  ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: 30),
+          !isExpanded ? const SizedBox(height: 30) : const SizedBox.shrink(),
 
-            // Botón de agregar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 35.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Textos a la izquierda
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Hola Alejandro',
-                        style: AppTextStyles.primaryTextStyle
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        'Bienvenido de vuelta',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontSize: 14,
+          // Botón de agregar
+          AnimatedSize(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            child: displayTopSection
+                ? Column(
+              children: [
+                AnimatedOpacity(
+                  opacity: showTopSection ? 1 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text('Hola Alejandro', style: AppTextStyles.primaryTextStyle),
+                            SizedBox(height: 5),
+                            Text('Bienvenido de vuelta', style: TextStyle(color: AppColors.primaryColor, fontSize: 14)),
+                          ],
                         ),
-                      ),
-                    ],
+                        ButtonAddLock(onPressed: showAddLockDialog),
+                      ],
+                    ),
                   ),
+                ),
+                const SizedBox(height: 30),
+                AnimatedOpacity(
+                  opacity: showTopSection ? 1 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: LatestLogCard(onPressed: showAddLockDialog),
+                  ),
+                ),
+              ],
+            )
+                : const SizedBox.shrink(),
+          ),
 
-                  // Botón a la derecha
-                  ButtonAddLock(onPressed: showAddLockDialog),
-                ],
-              ),
+
+          !isExpanded ? const SizedBox(height: 30) : const SizedBox.shrink(),
+
+          // Grid
+          Expanded(
+            child: Stack(
+              children: [
+                // Grid
+                Positioned.fill(
+                  child: LockGridScreen(
+                    locks: locks,
+                    isExpanded: isExpanded,
+                    onToggle: toggleAllItemsView,
+                  ),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 30),
-
-            // Tarjeta de último acceso
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: LatestLogCard(onPressed: showAddLockDialog),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Grid
-            Expanded(
-              child: LockGridScreen(
-                locks: locks,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-      bottomNavigationBar: const BottomBar(),
     );
   }
 }

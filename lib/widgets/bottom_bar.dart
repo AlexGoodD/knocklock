@@ -1,30 +1,22 @@
 import 'package:knocklock_flutter/core/imports.dart';
 
-class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+class BottomBar extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
 
-  @override
-  State<BottomBar> createState() => _BottomBarState();
-}
-
-class _BottomBarState extends State<BottomBar> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  const BottomBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(
-        splashColor: Colors.transparent,
-      ),
+      data: Theme.of(context).copyWith(splashColor: Colors.transparent),
       child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: currentIndex,
+        onTap: onTap,
         backgroundColor: AppColors.backgroundHelperColor,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primaryColor,
@@ -33,24 +25,12 @@ class _BottomBarState extends State<BottomBar> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lock),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.lock), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
         ],
       ),
     );
-    }
+  }
 }
