@@ -1,4 +1,4 @@
-import '../imports.dart';
+import '../core/imports.dart';
 
 class LockDetailScreen extends StatefulWidget {
   final Lock lock;

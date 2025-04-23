@@ -1,4 +1,4 @@
-import '../imports.dart';
+import '../core/imports.dart';
 
 class PatronWidget extends StatefulWidget {
   final List<int> patron;

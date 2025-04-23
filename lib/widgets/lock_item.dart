@@ -1,11 +1,11 @@
-import '../imports.dart';
+import '../core/imports.dart';
 
 class LockItem extends StatelessWidget {
   final String name;
   final String ip;
   final Lock lock;
 
-  LockItem({required this.name, required this.ip, required this.lock});
+  const LockItem({required this.name, required this.ip, required this.lock});
 
   @override
   Widget build(BuildContext context) {
@@ -19,48 +19,53 @@ class LockItem extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.all(8.0),
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
         decoration: BoxDecoration(
-          color: AppColors.backgroundLockItem,
+          color: AppColors.backgroundHelperColor,
           borderRadius: BorderRadius.circular(12.0),
-          border: Border.all(
-            color: Colors.transparent, // Color del borde
-            width: 2.0, // Ancho del borde
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.10),
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 40.0,
-              height: 40.0,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                color: AppColors.backgroundDetail,
-                borderRadius: BorderRadius.circular(8.0),
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(50),
               ),
-              child: Icon(Icons.lock, color: AppColors.backgroundLockItem),
+              child: Icon(Icons.lock, color: AppColors.backgroundHelperColor, size: 20),
             ),
-            SizedBox(width: 16.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.text1LockItem,
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  ip,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: AppColors.text2LockItem,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 8),
+            Text(
+              ip,
+              style: AppTextStyles.lockItemDescriptionStyle,
+              textAlign: TextAlign.left,
+            ),
+            const SizedBox(height: 0),
+            Text(
+              name,
+              style: AppTextStyles.lockItemTitleStyle,
+              textAlign: TextAlign.left,
+            ),
+            Switch(
+              value: true,
+              onChanged: (bool value) {
+                // Acción cuando cambia
+              },
+              activeColor: AppColors.backgroundHelperColor,
+              activeTrackColor: AppColors.primaryColor,
+              inactiveThumbColor: AppColors.backgroundHelperColor,
+              inactiveTrackColor: AppColors.secondaryColor,
             ),
           ],
         ),

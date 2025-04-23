@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color background = Color(0xFF000000);
+  static const Color backgroundTop = Color(0xFFFFFFFF);
+  static const Color backgroundBottom = Color(0xFFF0F7FF);
+  static const Color backgroundHelperColor = Color(0xFFFFFFFF);
+  static const Color primaryColor = Color(0xFF000000);
+  static const Color secondaryColor = Color(0xFF939393);
+
+  // Viejos colores
   static const Color backgroundDetail = Color(0xFFEEF3CB);
   static const Color primaryText = Color(0xFFEEF3CB);
   static const Color secondaryText = Colors.black;
@@ -15,11 +21,20 @@ class AppColors {
 }
 
 class AppTextStyles {
+
+  static const TextStyle primaryTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.bold, fontSize: 22);
+
+  static const TextStyle lockItemTitleStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15);
+  static const TextStyle lockItemDescriptionStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
+
+  static const TextStyle HelperPrimaryStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
+  static const TextStyle HelperSecondaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
+
+  // Viejos estilos
   static const TextStyle appBarTextStyle = TextStyle(color: AppColors.primaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 27);
   static const TextStyle appBarSecondaryTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 27);
   static const TextStyle dialogTitleTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 25);
   static const TextStyle dialogLabelTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle dialogInputTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15);
-  static const TextStyle primaryTextStyle = TextStyle(color: AppColors.primaryText, fontFamily: 'Roboto',);
   static const TextStyle secondaryTextStyle = TextStyle(color: AppColors.secondaryText, fontFamily: 'Roboto',);
 }

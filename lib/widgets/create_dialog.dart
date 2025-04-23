@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:knocklock_flutter/colors.dart';
+import 'package:knocklock_flutter/core/colors.dart';
 
 class CreateDialog extends StatelessWidget {
   final TextEditingController nameController;
