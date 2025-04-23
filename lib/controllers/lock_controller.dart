@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:knocklock_flutter/core/imports.dart';
 
 class LockController {
@@ -6,6 +7,7 @@ class LockController {
   final ValueNotifier<String> estadoVerificacion = ValueNotifier<String>("");
   final ValueNotifier<Color> colorEstado = ValueNotifier<Color>(Colors.transparent);
   final ValueNotifier<bool> isConnected = ValueNotifier<bool>(false);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Timer? _countdownTimer;
   List<int> patronActual = [];
@@ -15,6 +17,53 @@ class LockController {
   Completer<void>? _pausaCompleter;
 
   BuildContext? _dialogContext;
+
+  Future<void> agregarLock(String nombre, String ip) async {
+    try {
+      // Agregar un nuevo lock a la colección "locks"
+      DocumentReference lockRef = await _firestore.collection('locks').add({
+        'name': nombre,
+        'ip': ip,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // Agregar la subcolección "passwords" con los tres tipos
+      await lockRef.collection('passwords').doc('Clave').set({
+        'type': 'alfanumerico',
+        'value': '', // Valor inicial vacío
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await lockRef.collection('passwords').doc('Patron').set({
+        'type': 'arreglo_numeros',
+        'value': [], // Valor inicial vacío
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await lockRef.collection('passwords').doc('Token').set({
+        'type': 'alfanumerico',
+        'value': '', // Valor inicial vacío
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      print('Lock y contraseñas agregados correctamente.');
+    } catch (e) {
+      print('Error al agregar el lock: $e');
+    }
+  }
+
+  Stream<List<Lock>> obtenerLocks() {
+    return _firestore.collection('locks').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return Lock(
+          id: doc.id,
+          name: data['name'] ?? '',
+          ip: data['ip'] ?? '',
+        );
+      }).toList();
+    });
+  }
 
   void conectar(String ip) {
     final url = 'ws://$ip/ws';

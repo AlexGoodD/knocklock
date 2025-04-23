@@ -16,15 +16,20 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isExpanded = false;
   bool showTopSection = true;
   bool displayTopSection = true;
+  final LockController lockController = LockController();
 
-  void addLock() {
+  void addLock() async {
     final name = nameController.text;
     final ip = ipController.text;
+    final id = ipController.text;
+
 
     if (name.isNotEmpty && ip.isNotEmpty) {
       setState(() {
-        locks.add(Lock(name: name, ip: ip));
+        locks.add(Lock(id: id, name: name, ip: ip));
       });
+
+      await lockController.agregarLock(name, ip);
 
       nameController.clear();
       ipController.clear();

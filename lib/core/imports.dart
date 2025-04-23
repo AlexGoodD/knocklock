@@ -3,6 +3,9 @@ export 'package:flutter/material.dart';
 export 'package:flutter/services.dart';
 export 'dart:async';
 
+//Firebase
+import 'package:firebase_core/firebase_core.dart';
+
 //Websockets
 export 'package:web_socket_channel/web_socket_channel.dart';
 

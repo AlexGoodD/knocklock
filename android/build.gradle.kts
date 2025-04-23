@@ -21,6 +21,10 @@ tasks.register<Delete>("clean") {
 }
 
 buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
     dependencies {
         classpath("com.google.gms:google-services:4.3.15") // Asegúrate de usar la última versión
     }
