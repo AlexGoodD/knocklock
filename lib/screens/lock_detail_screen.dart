@@ -12,14 +12,12 @@ class LockDetailScreen extends StatefulWidget {
 class _LockDetailScreenState extends State<LockDetailScreen> {
   final LockController _controller = LockController();
   late Future<void> _initialization;
-  late bool _seguroActivo;
 
 
   @override
   void initState() {
     super.initState();
-    _seguroActivo = widget.lock.seguroActivo;
-    _controller.conectar(widget.lock.ip);
+    _controller.conectar(widget.lock.ip, widget.lock.id);
     _initialization = _controller.cargarModo(widget.lock.id);
   }
 
@@ -104,7 +102,6 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                         ActionLockButton(
                           lock: widget.lock,
                           controller: _controller,
-                          seguroActivo: _seguroActivo,
                         ),
                         const SizedBox(height: 20),
                         ValueListenableBuilder<String>(

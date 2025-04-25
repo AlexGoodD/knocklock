@@ -12,27 +12,35 @@ class LockController {
   final WebSocketService _webSocketService = WebSocketService();
 
   final ValueNotifier<String> estadoVerificacion = ValueNotifier<String>("");
-  final ValueNotifier<Color> colorEstado = ValueNotifier<Color>(Colors.transparent);
   final ValueNotifier<bool> isConnected = ValueNotifier<bool>(false);
   final ValueNotifier<String> modoSeleccionado = ValueNotifier<String>("");
-
   final ValueNotifier<bool> mostrarBotonGrabacion = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> seguroActivo = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> bloqueActivo = ValueNotifier<bool>(false);
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseDatabase _realtimeDB = FirebaseDatabase.instance;
+
+  String? _lockId;
 
   StreamSubscription<String>? _webSocketSubscription;
 
   BuildContext? dialogContext;
 
   /// Conexión al WebSocket del ESP32
-  void conectar(String ip) {
+  void conectar(String ip, String lockId) async {
     final url = 'ws://$ip/ws';
+    _lockId = lockId;
     _webSocketService.connect(url);
 
     _webSocketSubscription = _webSocketService.messages.listen((message) {
       _handleMessage(message);
     });
+
+    final doc = await _firestore.collection('locks').doc(lockId).get();
+    if (doc.exists && doc.data()?['seguroActivo'] != null) {
+      seguroActivo.value = doc.data()?['seguroActivo'];
+    }
   }
 
   /// Desconecta del WebSocket
@@ -48,31 +56,27 @@ class LockController {
 
   /// Maneja los mensajes recibidos del WebSocket
   void _handleMessage(String message) {
-    if (message.contains("desbloqueado") || message.contains("PATRON_CORRECTO")) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!)) {
-        Navigator.pop(dialogContext!);
-        dialogContext = null;
-      }
-
-      estadoVerificacion.value = "🔓 ¡Patrón correcto!";
-      colorEstado.value = Colors.green;
-      return;
-    }
+    print("📩 Mensaje del ESP32: $message");
 
     if (message.trim() == "CONNECTED") {
       isConnected.value = true;
-    } else {
-      estadoVerificacion.value = message;
+      return;
+    }
 
-      if (message.contains("desbloqueado")) {
-        colorEstado.value = Colors.green;
-      } else if (message.contains("te quedan")) {
-        colorEstado.value = Colors.orange;
-      } else if (message.contains("Sin intentos")) {
-        colorEstado.value = Colors.red;
-      } else {
-        colorEstado.value = Colors.grey;
-      }
+    // Estado de verificación visual
+    estadoVerificacion.value = message;
+
+    // Cambia el estado del candado
+    if (message.contains("ACCESO_CONCEDIDO")) {
+      cambiarEstadoSeguro(_lockId!, false);
+      print('El candado está abierto');
+    } else if (message.contains("ACCESO_FALLIDO")) {
+      cambiarEstadoSeguro(_lockId!, true);
+      print('El candado está bloqueado');
+    } else if (message.contains("ACCESO_BLOQUEADO_TEMPORALMENTE")) {
+      cambiarEstadoSeguro(_lockId!, true);
+      bloqueActivo.value = true;
+      print('El candado está bloqueado temporalmente');
     }
   }
 
@@ -164,6 +168,9 @@ class LockController {
           // Guardar en RTDB
           await _realtimeDB.ref('locks/${lock.id}/passwords/Patron').set(patronGrabado);
 
+          // Cambiar seguroActivo a true
+          cambiarEstadoSeguro(lock.id, true);
+
           if (context.mounted) {
             Navigator.pop(context); // Cerrar diálogo de grabación
 
@@ -190,10 +197,14 @@ class LockController {
     });
   }
 
+  void detenerGrabacion() {
+    enviarComando("STOP_GRABACION");
+    print('Grabación detenida');
+  }
+
   /// Inicia la verificación del patrón guardado
   Future<void> iniciarVerificacion(BuildContext context, Lock lock) async {
     enviarComando("START_VERIFICACION");
-
     try {
       final snapshot = await _realtimeDB.ref('locks/${lock.id}/passwords/Patron').get();
 
@@ -206,39 +217,16 @@ class LockController {
       final jsonPatron = jsonEncode(patronRTDB);
 
       enviarComando("PATRON:$jsonPatron");
-
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('Verificación iniciada'),
-          content: Text('Se ha enviado el patrón al ESP32'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                enviarComando("STOP_VERIFICACION");
-                Navigator.pop(ctx);
-              },
-              child: Text('Detener lectura'),
-            ),
-          ],
-        ),
-      );
+      print('✅ Verificación iniciada: Patrón enviado al ESP32');
     } catch (e) {
       print("❌ Error al obtener patrón desde RTDB: $e");
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('❌ Error'),
-          content: Text('No se pudo recuperar el patrón desde Realtime Database'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
     }
+  }
+
+  // Detiene la verificación del patrón
+  void detenerVerificacion() {
+    enviarComando("STOP_VERIFICACION");
+    print('Verificación detenida');
   }
 
   /// Agrega un nuevo lock en Firestore y RTDB
@@ -329,15 +317,19 @@ class LockController {
   // Cambiar el estado del seguro en Firestore
   Future<void> cambiarEstadoSeguro(String lockId, bool nuevoEstado) async {
     try {
-      // Actualizar en Firestore
+      // ✅ Actualiza Firebase
       await _firestore.collection('locks').doc(lockId).update({
         'seguroActivo': nuevoEstado,
       });
 
-      // Actualizar en RTDB
+      // ✅ Actualiza RTDB si lo usas
       await _realtimeDB.ref('locks/$lockId').update({
         'seguroActivo': nuevoEstado,
       });
+
+      // ✅ Actualiza el ValueNotifier también
+      seguroActivo.value = nuevoEstado;
+
     } catch (e) {
       print("Error al cambiar estado de seguroActivo: $e");
     }

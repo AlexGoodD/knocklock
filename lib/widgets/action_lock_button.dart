@@ -3,13 +3,11 @@ import 'package:knocklock_flutter/core/imports.dart';
 class ActionLockButton extends StatefulWidget {
   final Lock lock;
   final LockController controller;
-  final bool seguroActivo;
 
   const ActionLockButton({
     super.key,
     required this.lock,
     required this.controller,
-    required this.seguroActivo,
   });
 
   @override
@@ -29,20 +27,25 @@ class _ActionLockButtonState extends State<ActionLockButton>
     _animationHelper = ScaleAnimationHelper(vsync: this);
   }
 
-  void _handleTap() {
+  void _handleTap(bool seguroActivoActual) {
     _animationHelper.toggleScale(isScaledDown);
     isScaledDown = !isScaledDown;
 
-    if (isRecording) {
-      widget.controller.enviarComando("STOP_GRABACION");
-      Navigator.of(context).maybePop(); // Intenta cerrar el diálogo si está abierto
+    if (!seguroActivoActual) {
+      widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
+      setState(() {
+        isRecording = false;
+      });
     } else {
-      widget.controller.iniciarGrabacion(context, widget.lock);
+      if (isRecording) {
+        widget.controller.detenerVerificacion();
+      } else {
+        widget.controller.iniciarVerificacion(context, widget.lock);
+      }
+      setState(() {
+        isRecording = !isRecording;
+      });
     }
-
-    setState(() {
-      isRecording = !isRecording;
-    });
   }
 
   @override
@@ -53,44 +56,43 @@ class _ActionLockButtonState extends State<ActionLockButton>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationHelper.scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _animationHelper.scaleAnimation.value,
-          child: GestureDetector(
-            onTap: _handleTap,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: 220.0,
-              width: 220.0,
-              decoration: circularBoxDecoration(
-                color: isRecording
-                    ? AppColors.primaryColor
-                    : AppColors.backgroundHelperColor,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  isRecording
-                      ? const AnimatedRecordingIcon()
-                      : Icon(
-                    widget.seguroActivo
-                        ? Icons.lock_outlined
-                        : Icons.lock_open,
-                    color: Colors.black,
-                    size: 60.0,
+    return ValueListenableBuilder<bool>(
+      valueListenable: widget.controller.seguroActivo,
+      builder: (context, seguroActivoActual, _) {
+        return GestureDetector(
+          onTap: () => _handleTap(seguroActivoActual),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: 220.0,
+            width: 220.0,
+            decoration: circularBoxDecoration(
+              color: isRecording
+                  ? AppColors.primaryColor
+                  : AppColors.backgroundHelperColor,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                isRecording
+                    ? const AnimatedRecordingIcon()
+                    : Icon(
+                  seguroActivoActual
+                      ? Icons.lock_outlined
+                      : Icons.lock_open,
+                  color: Colors.black,
+                  size: 60.0,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  isRecording ? "Grabando..." : "Estado del\nDispositivo",
+                  style: AppTextStyles.secondaryTextStyle.copyWith(
+                    color: isRecording
+                        ? Colors.white
+                        : AppColors.primaryColor,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    isRecording ? "Grabando..." : "Estado del\nDispositivo",
-                    style: AppTextStyles.secondaryTextStyle.copyWith(
-                      color: isRecording ? Colors.white : AppColors.primaryColor,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         );
