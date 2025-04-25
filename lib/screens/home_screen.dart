@@ -9,7 +9,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Lock> locks = [];
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ipController = TextEditingController();
@@ -25,12 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
     if (name.isNotEmpty && ip.isNotEmpty) {
-      setState(() {
-        locks.add(Lock(id: id, name: name, ip: ip));
-      });
-
       await lockController.agregarLock(name, ip);
-
       nameController.clear();
       ipController.clear();
       Navigator.of(context).pop();
@@ -184,17 +178,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Grid
           Expanded(
-            child: Stack(
-              children: [
-                // Grid
-                Positioned.fill(
-                  child: LockGridScreen(
-                    locks: locks,
-                    isExpanded: isExpanded,
-                    onToggle: toggleAllItemsView,
-                  ),
-                ),
-              ],
+            child: StreamBuilder<List<Lock>>(
+              stream: lockController.obtenerLocks(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("No hay candados registrados"));
+                }
+
+                final locks = snapshot.data!;
+
+                return LockGridScreen(
+                  locks: locks,
+                  isExpanded: isExpanded,
+                  onToggle: toggleAllItemsView,
+                  lockController: lockController,
+                );
+              },
             ),
           ),
         ],

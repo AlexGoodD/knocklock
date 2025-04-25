@@ -1,81 +1,59 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:knocklock_flutter/core/imports.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:rxdart/rxdart.dart';
+import '../models/access_log.dart';
+import '../models/lock.dart';
+import '../services/websocket_service.dart';
 
 class LockController {
   final WebSocketService _webSocketService = WebSocketService();
-  final ValueNotifier<int> segundosRestantes = ValueNotifier<int>(0);
+
   final ValueNotifier<String> estadoVerificacion = ValueNotifier<String>("");
   final ValueNotifier<Color> colorEstado = ValueNotifier<Color>(Colors.transparent);
   final ValueNotifier<bool> isConnected = ValueNotifier<bool>(false);
+  final ValueNotifier<String> modoSeleccionado = ValueNotifier<String>("");
+
+  final ValueNotifier<bool> mostrarBotonGrabacion = ValueNotifier<bool>(false);
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseDatabase _realtimeDB = FirebaseDatabase.instance;
 
-  Timer? _countdownTimer;
-  List<int> patronActual = [];
-  bool estaPausado = false;
-  bool estaReproduciendo = false;
-  int barraActiva = -1;
-  Completer<void>? _pausaCompleter;
+  StreamSubscription<String>? _webSocketSubscription;
 
-  BuildContext? _dialogContext;
+  BuildContext? dialogContext;
 
-  Future<void> agregarLock(String nombre, String ip) async {
-    try {
-      // Agregar un nuevo lock a la colección "locks"
-      DocumentReference lockRef = await _firestore.collection('locks').add({
-        'name': nombre,
-        'ip': ip,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      // Agregar la subcolección "passwords" con los tres tipos
-      await lockRef.collection('passwords').doc('Clave').set({
-        'type': 'alfanumerico',
-        'value': '', // Valor inicial vacío
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      await lockRef.collection('passwords').doc('Patron').set({
-        'type': 'arreglo_numeros',
-        'value': [], // Valor inicial vacío
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      await lockRef.collection('passwords').doc('Token').set({
-        'type': 'alfanumerico',
-        'value': '', // Valor inicial vacío
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      print('Lock y contraseñas agregados correctamente.');
-    } catch (e) {
-      print('Error al agregar el lock: $e');
-    }
-  }
-
-  Stream<List<Lock>> obtenerLocks() {
-    return _firestore.collection('locks').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        final data = doc.data();
-        return Lock(
-          id: doc.id,
-          name: data['name'] ?? '',
-          ip: data['ip'] ?? '',
-        );
-      }).toList();
-    });
-  }
-
+  /// Conexión al WebSocket del ESP32
   void conectar(String ip) {
     final url = 'ws://$ip/ws';
     _webSocketService.connect(url);
 
-    _webSocketService.messages.listen((message) {
+    _webSocketSubscription = _webSocketService.messages.listen((message) {
       _handleMessage(message);
     });
   }
 
+  /// Desconecta del WebSocket
+  void desconectar() {
+    _webSocketService.disconnect();
+    _webSocketSubscription?.cancel();
+  }
+
+  /// Envía un mensaje al WebSocket
+  void enviarComando(String mensaje) {
+    _webSocketService.send(mensaje);
+  }
+
+  /// Maneja los mensajes recibidos del WebSocket
   void _handleMessage(String message) {
     if (message.contains("desbloqueado") || message.contains("PATRON_CORRECTO")) {
+      if (dialogContext != null && Navigator.canPop(dialogContext!)) {
+        Navigator.pop(dialogContext!);
+        dialogContext = null;
+      }
+
       estadoVerificacion.value = "🔓 ¡Patrón correcto!";
       colorEstado.value = Colors.green;
       return;
@@ -85,6 +63,7 @@ class LockController {
       isConnected.value = true;
     } else {
       estadoVerificacion.value = message;
+
       if (message.contains("desbloqueado")) {
         colorEstado.value = Colors.green;
       } else if (message.contains("te quedan")) {
@@ -97,82 +76,309 @@ class LockController {
     }
   }
 
-  void generarPatron() {
-    patronActual = _webSocketService.generarYEnviarPatron();
-    segundosRestantes.value = 5 * 60;
-    _iniciarContador();
+  /// Verifica el password de tipo "Clave" o "Patron"
+  Future<void> verificarPassword(String tipoPassword, BuildContext context, Lock lock) async {
+    try {
+      final passwordDoc = await _firestore
+          .collection('locks')
+          .doc(lock.id)
+          .collection('passwords')
+          .doc(tipoPassword)
+          .get();
+
+      if (!passwordDoc.exists) {
+        mostrarBotonGrabacion.value = true; // Mostrar botón si no hay contraseña
+        return;
+      }
+
+      final data = passwordDoc.data();
+      final value = data?['value'];
+
+      if (tipoPassword == 'Patron') {
+        if (value is List && value.isNotEmpty) {
+          print('Con contraseña: $value');
+          mostrarBotonGrabacion.value = false;
+        } else {
+          print('Sin contraseña actual');
+          mostrarBotonGrabacion.value = true;
+        }
+      } else if (tipoPassword == 'Clave') {
+        if (value == null || value.toString().trim().isEmpty) {
+          print('Sin contraseña actual');
+          mostrarBotonGrabacion.value = true;
+        } else {
+          print('Con contraseña: $value');
+          mostrarBotonGrabacion.value = false;
+        }
+      }
+    } catch (e) {
+      print('Error al verificar el password: $e');
+    }
   }
 
-  void _iniciarContador() {
-    _countdownTimer?.cancel();
-    _countdownTimer = Timer.periodic(Duration(seconds: 1), (_) {
-      segundosRestantes.value--;
-      if (segundosRestantes.value <= 0) {
-        _countdownTimer?.cancel();
+  /// Inicia la grabación de un nuevo patrón
+  void iniciarGrabacion(BuildContext context, Lock lock) {
+    enviarComando("START_GRABACION");
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          title: Text("Grabando..."),
+          content: Text("Presiona el botón para detener la grabación."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                enviarComando("STOP_GRABACION");
+                mostrarBotonGrabacion.value = false; // Ocultar el botón
+                Navigator.pop(dialogCtx); // Cerrar el diálogo
+              },
+              child: Text("Detener grabación"),
+            ),
+          ],
+        );
+      },
+    );
+
+    _webSocketSubscription = _webSocketService.messages.listen((message) async {
+      if (message.startsWith("PATRON_GRABADO:")) {
+        final jsonStr = message.replaceFirst("PATRON_GRABADO:", "");
+
+        try {
+          final List<dynamic> duraciones = jsonDecode(jsonStr);
+          final patronGrabado = duraciones.cast<int>();
+
+          // Guardar en Firestore
+          await _firestore
+              .collection('locks')
+              .doc(lock.id)
+              .collection('passwords')
+              .doc('Patron')
+              .set({
+            'type': 'arreglo_numeros',
+            'value': patronGrabado,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+          // Guardar en RTDB
+          await _realtimeDB.ref('locks/${lock.id}/passwords/Patron').set(patronGrabado);
+
+          if (context.mounted) {
+            Navigator.pop(context); // Cerrar diálogo de grabación
+
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text('Grabación finalizada'),
+                content: Text('El patrón ha sido guardado.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: Text('Aceptar'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          mostrarBotonGrabacion.value = false; // Ocultar el botón después de guardar
+        } catch (e) {
+          print("❌ Error al interpretar patrón: $e");
+        }
       }
     });
   }
 
-  Future<void> reproducirPatron(Function(int) onPaso) async {
-    if (patronActual.isEmpty || estaReproduciendo) return;
+  /// Inicia la verificación del patrón guardado
+  Future<void> iniciarVerificacion(BuildContext context, Lock lock) async {
+    enviarComando("START_VERIFICACION");
 
-    estaReproduciendo = true;
-    barraActiva = 0;
-    estaPausado = false;
+    try {
+      final snapshot = await _realtimeDB.ref('locks/${lock.id}/passwords/Patron').get();
 
-    await HapticFeedback.heavyImpact();
-
-    for (int i = 0; i < patronActual.length; i++) {
-      await Future.delayed(Duration(milliseconds: patronActual[i]));
-
-      if (estaPausado) {
-        _pausaCompleter = Completer<void>();
-        await _pausaCompleter!.future;
+      if (!snapshot.exists) {
+        print('⚠️ No hay patrón en RTDB');
+        return;
       }
 
-      await HapticFeedback.mediumImpact();
-      onPaso(i + 1);
+      final patronRTDB = List<int>.from((snapshot.value as List<dynamic>));
+      final jsonPatron = jsonEncode(patronRTDB);
+
+      enviarComando("PATRON:$jsonPatron");
+
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Verificación iniciada'),
+          content: Text('Se ha enviado el patrón al ESP32'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                enviarComando("STOP_VERIFICACION");
+                Navigator.pop(ctx);
+              },
+              child: Text('Detener lectura'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      print("❌ Error al obtener patrón desde RTDB: $e");
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('❌ Error'),
+          content: Text('No se pudo recuperar el patrón desde Realtime Database'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
-
-    await Future.delayed(Duration(milliseconds: 300));
-
-    estaReproduciendo = false;
-    estaPausado = false;
-    barraActiva = -1;
   }
 
-  void pausar() {
-    if (!estaPausado && estaReproduciendo) {
-      estaPausado = true;
+  /// Agrega un nuevo lock en Firestore y RTDB
+  Future<void> agregarLock(String nombre, String ip) async {
+    try {
+      final lockRef = await _firestore.collection('locks').add({
+        'name': nombre,
+        'ip': ip,
+        'modo': 'ninguno',
+        'seguroActivo': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await lockRef.collection('passwords').doc('Clave').set({
+        'type': 'alfanumerico',
+        'value': '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await lockRef.collection('passwords').doc('Patron').set({
+        'type': 'arreglo_numeros',
+        'value': [],
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await lockRef.collection('passwords').doc('Token').set({
+        'type': 'alfanumerico',
+        'value': '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await _realtimeDB.ref('locks/${lockRef.id}/passwords').set({
+        'Patron': [400, 500, 600],
+      });
+    } catch (e) {
+      print(e);
     }
   }
 
-  void continuar() {
-    if (estaPausado && _pausaCompleter != null) {
-      estaPausado = false;
-      _pausaCompleter?.complete();
+  // Obtiene los locks desde Firestore
+  Stream<List<Lock>> obtenerLocks() {
+    return _firestore.collection('locks').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return Lock(
+          seguroActivo: data['seguroActivo'] ?? false,
+          id: doc.id,
+          name: data['name'] ?? '',
+          ip: data['ip'] ?? '',
+        );
+      }).toList();
+    });
+  }
+
+  // Cargar el modo desde Firestore
+  Future<void> cargarModo(String lockId) async {
+    try {
+      final doc = await _firestore.collection('locks').doc(lockId).get();
+      if (doc.exists) {
+        final data = doc.data();
+        final modo = data?['modo'] ?? "PATRÓN"; // Valor por defecto
+        modoSeleccionado.value = modo;
+      }
+    } catch (e) {
+      print("Error al cargar el modo: $e");
     }
   }
 
-  void cancelar() {
-    patronActual = [];
-    barraActiva = -1;
-    estaPausado = false;
-    estaReproduciendo = false;
-    segundosRestantes.value = 0;
-    _countdownTimer?.cancel();
-    _pausaCompleter?.complete();
-  }
+  // Guardar el modo en Firestore
+  Future<void> guardarModo(String lockId) async {
+    try {
+      final nuevoModo = modoSeleccionado.value;
 
-  void enviar(String mensaje) {
-    if (isConnected.value && mensaje.isNotEmpty) {
-      _webSocketService.send(mensaje);
+      // Guardar en Firestore
+      await _firestore.collection('locks').doc(lockId).update({
+        'modo': nuevoModo,
+      });
+
+      // Guardar en RTDB
+      await _realtimeDB.ref('locks/$lockId').update({
+        'modo': nuevoModo,
+      });
+    } catch (e) {
+      print("Error al guardar el modo: $e");
     }
   }
 
-  void dispose() {
-    _webSocketService.disconnect();
-    _countdownTimer?.cancel();
-    segundosRestantes.dispose();
+  // Cambiar el estado del seguro en Firestore
+  Future<void> cambiarEstadoSeguro(String lockId, bool nuevoEstado) async {
+    try {
+      // Actualizar en Firestore
+      await _firestore.collection('locks').doc(lockId).update({
+        'seguroActivo': nuevoEstado,
+      });
+
+      // Actualizar en RTDB
+      await _realtimeDB.ref('locks/$lockId').update({
+        'seguroActivo': nuevoEstado,
+      });
+    } catch (e) {
+      print("Error al cambiar estado de seguroActivo: $e");
+    }
+  }
+
+  /// Seleccionar un nuevo modo
+  void seleccionarModo(String modo) {
+    modoSeleccionado.value = modo;
+  }
+
+  Stream<List<MapEntry<AccessLog, Lock>>> obtenerLogsConLocks() {
+    final logsStream = obtenerLogsAcceso();
+    final locksStream = obtenerLocks();
+
+    return Rx.combineLatest2(
+      logsStream,
+      locksStream,
+          (List<AccessLog> logs, List<Lock> locks) {
+        return logs.map((log) {
+          final lock = locks.firstWhere(
+                (l) => l.id == log.lockId,
+            orElse: () => Lock(
+              id: 'Desconocido',
+              name: 'Desconocido',
+              ip: '0.0.0.0',
+              seguroActivo: false,
+            ),
+          );
+          return MapEntry(log, lock);
+        }).toList();
+      },
+    );
+  }
+
+  Stream<List<AccessLog>> obtenerLogsAcceso() {
+    return _firestore
+        .collectionGroup('accessLogs')
+        .snapshots()
+        .map((snapshot) {
+      print("📦 Documentos recibidos: ${snapshot.docs.length}");
+      return snapshot.docs.map((doc) => AccessLog.fromDoc(doc)).toList();
+    });
   }
 }

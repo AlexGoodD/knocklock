@@ -27,7 +27,7 @@ class _MainNavigatorState extends State<MainNavigator> {
           });
         },
       ),
-      const LogsScreen(),
+      LogsScreen(),
       const PlaceholderScreen(title: 'Locks'),
       const PlaceholderScreen(title: 'Settings'),
     ];

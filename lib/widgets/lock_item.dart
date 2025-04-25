@@ -1,11 +1,34 @@
 import '../core/imports.dart';
 
-class LockItem extends StatelessWidget {
+class LockItem extends StatefulWidget {
   final String name;
   final String ip;
   final Lock lock;
 
-  const LockItem({required this.name, required this.ip, required this.lock});
+  const LockItem({super.key, required this.name, required this.ip, required this.lock});
+
+  @override
+  _LockItemState createState() => _LockItemState();
+}
+
+class _LockItemState extends State<LockItem> {
+  late bool _seguroActivo;
+
+  final LockController _lockController = LockController();
+
+  @override
+  void initState() {
+    super.initState();
+    _seguroActivo = widget.lock.seguroActivo;
+  }
+
+  void _toggleSeguro(bool nuevoEstado) async {
+    setState(() {
+      _seguroActivo = nuevoEstado;
+    });
+
+    await _lockController.cambiarEstadoSeguro(widget.lock.id, nuevoEstado);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +37,7 @@ class LockItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LockDetailScreen(lock: lock),
+            builder: (context) => LockDetailScreen(lock: widget.lock),
           ),
         );
       },
@@ -43,30 +66,39 @@ class LockItem extends StatelessWidget {
                 color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(50),
               ),
-              child: Icon(Icons.lock, color: AppColors.backgroundHelperColor, size: 20),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: Icon(
+                  _seguroActivo ? Icons.lock_outlined : Icons.lock_open,
+                  key: ValueKey(_seguroActivo),
+                  color: AppColors.backgroundHelperColor,
+                  size: 20,
+                ),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
-              ip,
+              widget.ip,
               style: AppTextStyles.lockItemDescriptionStyle,
               textAlign: TextAlign.left,
             ),
-            const SizedBox(height: 0),
             Text(
-              name,
+              widget.name,
               style: AppTextStyles.lockItemTitleStyle,
               textAlign: TextAlign.left,
             ),
             Switch(
-              value: true,
-              onChanged: (bool value) {
-                // Acción cuando cambia
-              },
+              value: _seguroActivo,
+              onChanged: _toggleSeguro,
               activeColor: AppColors.backgroundHelperColor,
               activeTrackColor: AppColors.primaryColor,
               inactiveThumbColor: AppColors.backgroundHelperColor,
               inactiveTrackColor: AppColors.secondaryColor,
-            ),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            )
           ],
         ),
       ),

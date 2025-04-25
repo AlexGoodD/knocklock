@@ -1,8 +1,10 @@
 import 'package:knocklock_flutter/core/imports.dart';
 
 class LogCard extends StatelessWidget {
+  final AccessLog log;
+  final Lock lock;
 
-  const LogCard({ super.key});
+  const LogCard({super.key, required this.log, required this.lock});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +23,10 @@ class LogCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'Casa (192.168.1.80)',
-                      style: TextStyle(
+                      '${lock.name} (${lock.ip})',
+                      style: const TextStyle(
                         color: AppColors.primaryColor,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -32,21 +34,21 @@ class LogCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.calendar_today,
                           color: AppColors.primaryColor,
                           size: 14,
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         Text(
-                          '22 de abril del 2025, 10:42 am',
-                          style: AppTextStyles.HelperItemsSecondaryStyle
+                          '${log.timestamp.day} de ${_getMonthName(log.timestamp.month)} del ${log.timestamp.year}, ${log.timestamp.hour}:${log.timestamp.minute.toString().padLeft(2, '0')}',
+                          style: AppTextStyles.HelperItemsSecondaryStyle,
                         ),
-                        Spacer(),
-                        StatusLog(isSuccess: false),
+                        const Spacer(),
+                        StatusLog(isSuccess: log.estado == 'Acceso correcto'),
                       ],
                     ),
                   ],
@@ -57,5 +59,23 @@ class LogCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre'
+    ];
+    return months[month - 1];
   }
 }
