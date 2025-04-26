@@ -11,6 +11,7 @@ class AccessLog {
     required this.lockId,
   });
 
+  // Cargar desde un DocumentSnapshot
   factory AccessLog.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
@@ -21,6 +22,15 @@ class AccessLog {
       estado: data['estado'] ?? 'Desconocido',
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       lockId: lockId,
+    );
+  }
+
+  // Cargar desde un Map<String, dynamic>
+  factory AccessLog.fromMap(Map<String, dynamic> data) {
+    return AccessLog(
+      estado: data['estado'] ?? 'Desconocido',
+      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      lockId: data['lockId'] ?? 'Desconocido',
     );
   }
 }
