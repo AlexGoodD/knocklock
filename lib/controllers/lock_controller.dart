@@ -91,7 +91,7 @@ class LockController {
           .get();
 
       if (!passwordDoc.exists) {
-        mostrarBotonGrabacion.value = true; // Mostrar botón si no hay contraseña
+        mostrarBotonGrabacion.value = true;
         return;
       }
 

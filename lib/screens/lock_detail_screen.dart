@@ -165,28 +165,44 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                             ValueListenableBuilder<bool>(
                               valueListenable: _controller.mostrarBotonGrabacion,
                               builder: (context, mostrar, child) {
-                                return Visibility(
-                                  visible: mostrar,
-                                  maintainSize: true,
-                                  maintainAnimation: true,
-                                  maintainState: true,
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        _controller.iniciarGrabacion(
-                                            context, widget.lock),
-                                    child: Container(
-                                      height: 70.0,
-                                      width: 70.0,
-                                      decoration: circularBoxDecoration(
-                                        color: AppColors.backgroundHelperColor,
+                                return ValueListenableBuilder<String>(
+                                  valueListenable: _controller.modoSeleccionado,
+                                  builder: (context, modo, child) {
+                                    // Definir si realmente mostrar el botón basado en modo y mostrar
+                                    bool mostrarBoton = mostrar && (modo == "PATRÓN" || modo == "CLAVE");
+                                    return IgnorePointer(
+                                      ignoring: !mostrarBoton,
+                                      child: Opacity(
+                                        opacity: mostrarBoton ? 1.0 : 0.0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (modo == "PATRÓN") {
+                                              _controller.iniciarGrabacion(context, widget.lock);
+                                            } else if (modo == "CLAVE") {
+                                              _controller.verificarPassword('Clave', context, widget.lock);
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 70.0,
+                                            width: 70.0,
+                                            decoration: circularBoxDecoration(
+                                              color: AppColors.backgroundHelperColor,
+                                            ),
+                                            child: Icon(
+                                              modo == "PATRÓN"
+                                                  ? Icons.mic
+                                                  : modo == "CLAVE"
+                                                  ? Icons.dialpad
+                                                  : Icons
+                                                  .close, // Esto no se verá porque estará oculto en modo TOKEN
+                                              color: Colors.black,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      child: IconButton(
-                                        onPressed: null,
-                                        icon: Icon(
-                                            Icons.mic, color: Colors.black, size: 30),
-                                      ),
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 );
                               },
                             ),
