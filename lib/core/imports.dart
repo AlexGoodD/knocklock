@@ -2,9 +2,10 @@
 export 'package:flutter/material.dart';
 export 'package:flutter/services.dart';
 export 'dart:async';
+export 'dart:convert';
 
 //Firebase
-import 'package:firebase_core/firebase_core.dart';
+export 'package:cloud_firestore/cloud_firestore.dart';
 
 //Websockets
 export 'package:web_socket_channel/web_socket_channel.dart';
@@ -24,6 +25,8 @@ export 'package:knocklock_flutter/core/colors.dart';
 
 //Services
 export 'package:knocklock_flutter/services/websocket_service.dart';
+export 'package:knocklock_flutter/services/firestore_service.dart';
+export 'package:knocklock_flutter/services/realtime_database_service.dart';
 
 //Widgets
 export 'package:knocklock_flutter/widgets/lock_item.dart';
@@ -49,4 +52,4 @@ export 'package:vibration/vibration.dart';
 export 'package:knocklock_flutter/utils/animation_helper.dart';
 export 'package:knocklock_flutter/utils/circular_box_decoration.dart';
 export 'package:knocklock_flutter/utils/animated_recording_icon.dart';
-import 'package:rxdart/rxdart.dart';
+export 'package:rxdart/rxdart.dart';

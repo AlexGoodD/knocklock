@@ -168,7 +168,6 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                 return ValueListenableBuilder<String>(
                                   valueListenable: _controller.modoSeleccionado,
                                   builder: (context, modo, child) {
-                                    // Definir si realmente mostrar el botón basado en modo y mostrar
                                     bool mostrarBoton = mostrar && (modo == "PATRÓN" || modo == "CLAVE");
                                     return IgnorePointer(
                                       ignoring: !mostrarBoton,
@@ -194,7 +193,7 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                                   : modo == "CLAVE"
                                                   ? Icons.dialpad
                                                   : Icons
-                                                  .close, // Esto no se verá porque estará oculto en modo TOKEN
+                                                  .close,
                                               color: Colors.black,
                                               size: 30,
                                             ),
