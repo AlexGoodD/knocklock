@@ -12,7 +12,8 @@ class AppColors {
   static const Color successTextColor = Color(0xFF00AA28);
   static const Color successBackgroundColor = Color(0xFFEDFFEF);
   static const Color HelperBorderColor = Color(0xFFEFEFEF);
-
+  static const Color trueConnectionColor = Color(0xFF00A500);
+  static const Color falseConnectionColor = Color(0xFFA50003);
 
   // Viejos colores
   static const Color backgroundDetail = Color(0xFFEEF3CB);

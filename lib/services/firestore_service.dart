@@ -7,7 +7,8 @@ class FirestoreService {
     return _firestore.collection('locks').doc(lockId).get();
   }
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getPassword(String lockId, String tipoPassword) {
+  Future<DocumentSnapshot<Map<String, dynamic>>> getPassword(String lockId,
+      String tipoPassword) {
     return _firestore
         .collection('locks')
         .doc(lockId)
@@ -29,12 +30,14 @@ class FirestoreService {
     });
   }
 
-  Future<DocumentReference<Map<String, dynamic>>> addLock(Map<String, dynamic> lockData) {
+  Future<DocumentReference<Map<String, dynamic>>> addLock(
+      Map<String, dynamic> lockData) {
     return _firestore.collection('locks').add(lockData);
   }
 
   Future<void> setInitialPasswords(String lockId) async {
-    final passwords = _firestore.collection('locks').doc(lockId).collection('passwords');
+    final passwords = _firestore.collection('locks').doc(lockId).collection(
+        'passwords');
     await passwords.doc('Clave').set({
       'type': 'alfanumerico',
       'value': '',
@@ -67,7 +70,8 @@ class FirestoreService {
   }
 
   Future<void> updateLockSecureState(String lockId, bool seguroActivo) {
-    return _firestore.collection('locks').doc(lockId).update({'seguroActivo': seguroActivo});
+    return _firestore.collection('locks').doc(lockId).update(
+        {'seguroActivo': seguroActivo});
   }
 
   Stream<List<Map<String, dynamic>>> getAccessLogs() {
@@ -99,11 +103,36 @@ class FirestoreService {
 
     final lockIds = locksQuery.docs.map((doc) => doc.id).toList();
 
-    yield* _firestore
-        .collectionGroup('accessLogs')
-        .where('lockId', whereIn: lockIds)
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+    if (lockIds.isEmpty) {
+      yield [];
+      return;
+    }
+
+    List<Map<String, dynamic>> allLogs = [];
+
+    for (final lockId in lockIds) {
+      final accessLogsSnapshot = await _firestore
+          .collection('locks')
+          .doc(lockId)
+          .collection('accessLogs')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      final logs = accessLogsSnapshot.docs.map((doc) {
+        final data = doc.data();
+        data['lockId'] = lockId;
+        return data;
+      }).toList();
+
+      allLogs.addAll(logs);
+    }
+
+    allLogs.sort((a, b) {
+      final tsA = (a['timestamp'] as Timestamp).toDate();
+      final tsB = (b['timestamp'] as Timestamp).toDate();
+      return tsB.compareTo(tsA);
+    });
+
+    yield allLogs;
   }
 }

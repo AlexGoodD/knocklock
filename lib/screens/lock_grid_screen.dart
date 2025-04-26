@@ -64,17 +64,25 @@ class LockGridScreen extends StatelessWidget {
                 mainAxisSpacing: 30,
                 childAspectRatio: 1,
               ),
-              itemBuilder: (context, index) {
-                final lock = locks[index];
-                return LockItem(
-                  name: lock.name,
-                  ip: lock.ip,
-                  lock: lock,
-                );
-              },
+                itemBuilder: (context, index) {
+                  final lock = locks[index];
+                  final isConnectedNotifier = lockController.dispositivosConectados[lock.id] ?? ValueNotifier<bool>(false);
+                  return ValueListenableBuilder<bool>(
+                    valueListenable: isConnectedNotifier,
+                    builder: (context, isConnected, child) {
+                      return LockItem(
+                        key: ValueKey(lock.id),
+                        name: lock.name,
+                        ip: lock.ip,
+                        lock: lock,
+                        lockController: lockController,
+                      );
+                    },
+                  );
+                }
             ),
           ),
-        ),
+        )
       ],
     );
   }

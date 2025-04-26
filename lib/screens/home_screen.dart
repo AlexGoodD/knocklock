@@ -194,6 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 final locks = snapshot.data!;
 
+                lockController.inicializarEstadoDispositivos(locks);
+                lockController.iniciarVerificacionPeriodica(locks);
+
                 return LockGridScreen(
                   locks: locks,
                   isExpanded: isExpanded,
@@ -202,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-          ),
+          )
         ],
       ),
     );

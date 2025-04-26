@@ -1,4 +1,5 @@
 import 'package:knocklock_flutter/core/imports.dart';
+import 'package:http/http.dart' as http;
 
 class LockController {
   final WebSocketService _webSocketService = WebSocketService();
@@ -12,9 +13,12 @@ class LockController {
   final ValueNotifier<bool> seguroActivo = ValueNotifier<bool>(false);
   final ValueNotifier<bool> bloqueActivo = ValueNotifier<bool>(false);
 
+  final Map<String, ValueNotifier<bool>> dispositivosConectados = {};
+
   String? _lockId;
   StreamSubscription<String>? _webSocketSubscription;
   BuildContext? dialogContext;
+  Timer? _verificacionTimer;
 
   void conectar(String ip, String lockId) async {
     final url = 'ws://$ip/ws';
@@ -34,6 +38,44 @@ class LockController {
   void desconectar() {
     _webSocketService.disconnect();
     _webSocketSubscription?.cancel();
+  }
+
+  void iniciarVerificacionPeriodica(List<Lock> locks) {
+    _verificacionTimer?.cancel();
+
+    _verificacionTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      await _barridoPing(locks);
+    });
+  }
+
+  Future<void> _barridoPing(List<Lock> locks) async {
+    final futures = locks.map((lock) => verificarConexion(lock.ip, lock.id)).toList();
+    await Future.wait(futures);
+  }
+
+  Future<void> verificarConexion(String ip, String lockId) async {
+    try {
+      final url = Uri.parse('http://$ip/ping');
+
+      final response = await http.get(url).timeout(const Duration(seconds: 2));
+
+      if (response.statusCode == 200) {
+        dispositivosConectados[lockId]?.value = true;
+      } else {
+        dispositivosConectados[lockId]?.value = false;
+      }
+    } catch (e) {
+      dispositivosConectados[lockId]?.value = false;
+    }
+  }
+
+  void inicializarEstadoDispositivos(List<Lock> locks) {
+    for (final lock in locks) {
+      if (!dispositivosConectados.containsKey(lock.id)) {
+        dispositivosConectados[lock.id] = ValueNotifier<bool>(false);
+        verificarConexion(lock.ip, lock.id);
+      }
+    }
   }
 
   void enviarComando(String mensaje) {
