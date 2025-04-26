@@ -1,4 +1,5 @@
 import 'package:knocklock_flutter/core/imports.dart';
+import 'package:intl/intl.dart';
 
 class LogCard extends StatelessWidget {
   final AccessLog log;
@@ -44,7 +45,7 @@ class LogCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          '${log.timestamp.day} de ${_getMonthName(log.timestamp.month)} del ${log.timestamp.year}, ${log.timestamp.hour}:${log.timestamp.minute.toString().padLeft(2, '0')}',
+                          '${log.timestamp.day} de ${_getMonthName(log.timestamp.month)} del ${log.timestamp.year}, ${DateFormat('h:mm a').format(log.timestamp)}',
                           style: AppTextStyles.HelperItemsSecondaryStyle,
                         ),
                         const Spacer(),

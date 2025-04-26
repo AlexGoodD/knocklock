@@ -26,11 +26,17 @@ class _MainNavigatorState extends State<MainNavigator> {
             _showBottomBar = !isExpanded;
           });
         },
+        onNavigateTo: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
-      LogsScreen(),
+      const LogsScreen(),
       const PlaceholderScreen(title: 'Locks'),
       const PlaceholderScreen(title: 'Settings'),
     ];
+
 
     return Container(
         decoration: const BoxDecoration(

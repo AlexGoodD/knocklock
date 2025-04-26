@@ -2,7 +2,8 @@ import '../core/imports.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function(bool isExpanded)? onExpandChange;
-  const HomeScreen({super.key, this.onExpandChange});
+  final void Function(int index)? onNavigateTo;
+  const HomeScreen({super.key, this.onExpandChange, this.onNavigateTo});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,8 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void addLock() async {
     final name = nameController.text;
     final ip = ipController.text;
-    final id = ipController.text;
-
 
     if (name.isNotEmpty && ip.isNotEmpty) {
       await lockController.agregarLock(name, ip);
@@ -168,7 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   duration: const Duration(milliseconds: 300),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: LatestLogCard(onPressed: showAddLockDialog),
+                    child: LatestLogCard(
+                      lockController: lockController,
+                      onPressed: () {
+                        widget.onNavigateTo?.call(1); // 👈🏻 Cambia al tab 1 (Logs)
+                      },
+                    ),
                   ),
                 ),
               ],
