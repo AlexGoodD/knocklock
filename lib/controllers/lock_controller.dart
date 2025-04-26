@@ -82,65 +82,69 @@ class LockController {
     }
   }
 
-  void iniciarGrabacion(BuildContext context, Lock lock) {
-    enviarComando("START_GRABACION");
+  void iniciarGrabacion(BuildContext context, Lock lock, String tipoGrabacion) {
+    if (tipoGrabacion == "Patron") {
+      enviarComando("START_GRABACION");
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogCtx) {
-        return AlertDialog(
-          title: Text("Grabando..."),
-          content: Text("Presiona el botón para detener la grabación."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                enviarComando("STOP_GRABACION");
-                mostrarBotonGrabacion.value = false;
-                Navigator.pop(dialogCtx);
-              },
-              child: Text("Detener grabación"),
-            ),
-          ],
-        );
-      },
-    );
-
-    _webSocketSubscription = _webSocketService.messages.listen((message) async {
-      if (message.startsWith("PATRON_GRABADO:")) {
-        final jsonStr = message.replaceFirst("PATRON_GRABADO:", "");
-
-        try {
-          final List<dynamic> duraciones = jsonDecode(jsonStr);
-          final patronGrabado = duraciones.cast<int>();
-
-          await _firestoreService.savePattern(lock.id, patronGrabado);
-          await _realtimeDBService.savePattern(lock.id, patronGrabado);
-          cambiarEstadoSeguro(lock.id, true);
-
-          if (context.mounted) {
-            Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text('Grabación finalizada'),
-                content: Text('El patrón ha sido guardado.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: Text('Aceptar'),
-                  ),
-                ],
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogCtx) {
+          return AlertDialog(
+            title: Text("Grabando..."),
+            content: Text("Presiona el botón para detener la grabación."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  enviarComando("STOP_GRABACION");
+                  mostrarBotonGrabacion.value = false;
+                  Navigator.pop(dialogCtx);
+                },
+                child: Text("Detener grabación"),
               ),
-            );
-          }
+            ],
+          );
+        },
+      );
 
-          mostrarBotonGrabacion.value = false;
-        } catch (e) {
-          print("❌ Error al interpretar patrón: $e");
+      _webSocketSubscription = _webSocketService.messages.listen((message) async {
+        if (message.startsWith("PATRON_GRABADO:")) {
+          final jsonStr = message.replaceFirst("PATRON_GRABADO:", "");
+
+          try {
+            final List<dynamic> duraciones = jsonDecode(jsonStr);
+            final patronGrabado = duraciones.cast<int>();
+
+            await _firestoreService.savePattern(lock.id, patronGrabado);
+            await _realtimeDBService.savePattern(lock.id, patronGrabado);
+            cambiarEstadoSeguro(lock.id, true);
+
+            if (context.mounted) {
+              Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text('Grabación finalizada'),
+                  content: Text('El patrón ha sido guardado.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text('Aceptar'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            mostrarBotonGrabacion.value = false;
+          } catch (e) {
+            print("❌ Error al interpretar patrón: $e");
+          }
         }
-      }
-    });
+      });
+    } else if (tipoGrabacion == "Clave") {
+      print("Ingresa tu clave");
+    }
   }
 
   void detenerGrabacion() {
@@ -173,23 +177,38 @@ class LockController {
 
   Future<void> agregarLock(String nombre, String ip) async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        print('⚠️ No hay un usuario autenticado.');
+        return;
+      }
+
+      // Agrega el lock con el uid del usuario
       final lockRef = await _firestoreService.addLock({
         'name': nombre,
         'ip': ip,
         'modo': 'ninguno',
         'seguroActivo': false,
         'createdAt': FieldValue.serverTimestamp(),
+        'createdBy': user.uid, // Asociar el lock al usuario actual
       });
 
+      // Configura las contraseñas iniciales
       await _firestoreService.setInitialPasswords(lockRef.id);
       await _realtimeDBService.createInitialPasswords(lockRef.id);
     } catch (e) {
-      print(e);
+      print('❌ Error al agregar lock: $e');
     }
   }
 
   Stream<List<Lock>> obtenerLocks() {
-    return _firestoreService.getLocks().map((locksData) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
+
+    return Stream.fromFuture(_firestoreService.getLocksByUser(user.uid)).map((locksData) {
       return locksData.map((data) {
         return Lock(
           id: data['id'],
@@ -263,16 +282,14 @@ class LockController {
   }
 
   Stream<List<AccessLog>> obtenerLogsAcceso() async* {
-    try {
-      final logsStream = _firestoreService.getAccessLogs();
-
-      await for (var logsData in logsStream) {
-        final logs = logsData.map((data) => AccessLog.fromMap(data)).toList();
-        yield logs;
-      }
-    } catch (e) {
-      print('🔥 Error al obtener logs: $e');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
       yield [];
+      return;
     }
+
+    yield* _firestoreService.getAccessLogsByUser(user.uid).map((logsData) {
+      return logsData.map((data) => AccessLog.fromMap(data)).toList();
+    });
   }
 }

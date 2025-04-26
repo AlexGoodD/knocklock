@@ -12,6 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ipController = TextEditingController();
+  final authService = FirebaseAuthService();
   bool isExpanded = false;
   bool showTopSection = true;
   bool displayTopSection = true;
@@ -115,7 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Material(
                   color: Colors.transparent,
                   child: InkResponse(
-                    onTap: () {},
+                    onTap: () async {
+                      await authService.logoutUser();
+                    },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     radius: 24,

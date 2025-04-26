@@ -77,4 +77,33 @@ class FirestoreService {
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
+
+  Future<List<Map<String, dynamic>>> getLocksByUser(String userId) async {
+    final querySnapshot = await _firestore
+        .collection('locks')
+        .where('createdBy', isEqualTo: userId)
+        .get();
+
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
+  }
+
+  Stream<List<Map<String, dynamic>>> getAccessLogsByUser(String userId) async* {
+    final locksQuery = await _firestore
+        .collection('locks')
+        .where('createdBy', isEqualTo: userId)
+        .get();
+
+    final lockIds = locksQuery.docs.map((doc) => doc.id).toList();
+
+    yield* _firestore
+        .collectionGroup('accessLogs')
+        .where('lockId', whereIn: lockIds)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
 }

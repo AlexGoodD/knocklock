@@ -6,6 +6,8 @@ export 'dart:convert';
 
 //Firebase
 export 'package:cloud_firestore/cloud_firestore.dart';
+export 'package:firebase_core/firebase_core.dart';
+export 'package:firebase_auth/firebase_auth.dart';
 
 //Websockets
 export 'package:web_socket_channel/web_socket_channel.dart';
@@ -19,6 +21,8 @@ export 'package:knocklock_flutter/screens/home_screen.dart';
 export 'package:knocklock_flutter/screens/lock_grid_screen.dart';
 export 'package:knocklock_flutter/screens/lock_detail_screen.dart';
 export 'package:knocklock_flutter/screens/logs_screen.dart';
+export 'package:knocklock_flutter/screens/login_screen.dart';
+export 'package:knocklock_flutter/screens/register_screen.dart';
 
 //Core
 export 'package:knocklock_flutter/core/colors.dart';
@@ -27,6 +31,7 @@ export 'package:knocklock_flutter/core/colors.dart';
 export 'package:knocklock_flutter/services/websocket_service.dart';
 export 'package:knocklock_flutter/services/firestore_service.dart';
 export 'package:knocklock_flutter/services/realtime_database_service.dart';
+export 'package:knocklock_flutter/services/firebase_auth_service.dart';
 
 //Widgets
 export 'package:knocklock_flutter/widgets/lock_item.dart';
@@ -40,6 +45,7 @@ export 'package:knocklock_flutter/widgets/status_log.dart';
 export 'package:knocklock_flutter/widgets/quick_access_modal.dart';
 export 'package:knocklock_flutter/widgets/mode_button.dart';
 export 'package:knocklock_flutter/widgets/action_lock_button.dart';
+export 'package:knocklock_flutter/widgets/recording_button.dart';
 
 //Navigator
 export 'package:knocklock_flutter/navigation/main_navigator.dart';

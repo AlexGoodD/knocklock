@@ -168,38 +168,15 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                 return ValueListenableBuilder<String>(
                                   valueListenable: _controller.modoSeleccionado,
                                   builder: (context, modo, child) {
-                                    bool mostrarBoton = mostrar && (modo == "PATRÓN" || modo == "CLAVE");
-                                    return IgnorePointer(
-                                      ignoring: !mostrarBoton,
-                                      child: Opacity(
-                                        opacity: mostrarBoton ? 1.0 : 0.0,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            if (modo == "PATRÓN") {
-                                              _controller.iniciarGrabacion(context, widget.lock);
-                                            } else if (modo == "CLAVE") {
-                                              _controller.verificarPassword('Clave', context, widget.lock);
-                                            }
-                                          },
-                                          child: Container(
-                                            height: 70.0,
-                                            width: 70.0,
-                                            decoration: circularBoxDecoration(
-                                              color: AppColors.backgroundHelperColor,
-                                            ),
-                                            child: Icon(
-                                              modo == "PATRÓN"
-                                                  ? Icons.mic
-                                                  : modo == "CLAVE"
-                                                  ? Icons.dialpad
-                                                  : Icons
-                                                  .close,
-                                              color: Colors.black,
-                                              size: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                    return RecordingButton(
+                                      modo: modo,
+                                      mostrar: mostrar,
+                                      onPatronTap: () {
+                                        _controller.iniciarGrabacion(context, widget.lock, "Patron");
+                                      },
+                                      onClaveTap: () {
+                                        _controller.iniciarGrabacion(context, widget.lock, "Clave");
+                                      },
                                     );
                                   },
                                 );
