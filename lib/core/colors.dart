@@ -7,10 +7,16 @@ class AppColors {
   static const Color secondaryBackgroundHelperColor = Color(0xFFFCFCFC);
   static const Color primaryColor = Color(0xFF000000);
   static const Color secondaryColor = Color(0xFF939393);
+
   static const Color errorTextColor = Color(0xFFFE7474);
   static const Color errorBackgroundColor = Color(0xFFFFEDED);
+
   static const Color successTextColor = Color(0xFF00AA28);
   static const Color successBackgroundColor = Color(0xFFEDFFEF);
+
+  static const Color warningBackgroundColor = Color(0xFFFFFFF1);
+  static const Color warningTextColor = Color(0xFFCEA100);
+
   static const Color HelperBorderColor = Color(0xFFEFEFEF);
   static const Color trueConnectionColor = Color(0xFF00A500);
   static const Color falseConnectionColor = Color(0xFFA50003);

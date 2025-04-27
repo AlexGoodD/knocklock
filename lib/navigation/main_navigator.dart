@@ -8,7 +8,7 @@ class MainNavigator extends StatefulWidget {
 }
 
 class _MainNavigatorState extends State<MainNavigator> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2; // Indice temporal
   bool _showBottomBar = true;
 
   void _onTap(int index) {
@@ -33,7 +33,7 @@ class _MainNavigatorState extends State<MainNavigator> {
         },
       ),
       const LogsScreen(),
-      const PlaceholderScreen(title: 'Locks'),
+      const SecurityScreen(),
       const PlaceholderScreen(title: 'Settings'),
     ];
 

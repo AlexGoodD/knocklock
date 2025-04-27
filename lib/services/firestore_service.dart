@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../core/imports.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -95,44 +95,57 @@ class FirestoreService {
     }).toList();
   }
 
-  Stream<List<Map<String, dynamic>>> getAccessLogsByUser(String userId) async* {
-    final locksQuery = await _firestore
+  Stream<List<Map<String, dynamic>>> getAccessLogsByUser(String userId) {
+    return _firestore
         .collection('locks')
         .where('createdBy', isEqualTo: userId)
-        .get();
+        .snapshots()
+        .asyncExpand((locksSnapshot) {
+      final lockIds = locksSnapshot.docs.map((doc) => doc.id).toList();
 
-    final lockIds = locksQuery.docs.map((doc) => doc.id).toList();
+      if (lockIds.isEmpty) {
+        return Stream.value([]);
+      }
 
-    if (lockIds.isEmpty) {
-      yield [];
-      return;
-    }
-
-    List<Map<String, dynamic>> allLogs = [];
-
-    for (final lockId in lockIds) {
-      final accessLogsSnapshot = await _firestore
-          .collection('locks')
-          .doc(lockId)
-          .collection('accessLogs')
-          .orderBy('timestamp', descending: true)
-          .get();
-
-      final logs = accessLogsSnapshot.docs.map((doc) {
-        final data = doc.data();
-        data['lockId'] = lockId;
-        return data;
+      final List<Stream<List<Map<String, dynamic>>>> streams = lockIds.map((lockId) {
+        return _firestore
+            .collection('locks')
+            .doc(lockId)
+            .collection('accessLogs')
+            .orderBy('timestamp', descending: true)
+            .snapshots()
+            .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            final data = doc.data();
+            data['lockId'] = lockId;
+            return data;
+          }).toList();
+        });
       }).toList();
 
-      allLogs.addAll(logs);
-    }
-
-    allLogs.sort((a, b) {
-      final tsA = (a['timestamp'] as Timestamp).toDate();
-      final tsB = (b['timestamp'] as Timestamp).toDate();
-      return tsB.compareTo(tsA);
+      return Rx.combineLatestList(streams).map((listOfLists) {
+        final allLogs = listOfLists.expand((logs) => logs).toList();
+        allLogs.sort((a, b) {
+          final tsA = (a['timestamp'] as Timestamp).toDate();
+          final tsB = (b['timestamp'] as Timestamp).toDate();
+          return tsB.compareTo(tsA);
+        });
+        return allLogs;
+      });
     });
+  }
 
-    yield allLogs;
+  Stream<List<Map<String, dynamic>>> streamLocksByUser(String userId) {
+    return _firestore
+        .collection('locks')
+        .where('createdBy', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+    });
   }
 }

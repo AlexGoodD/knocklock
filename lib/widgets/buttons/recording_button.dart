@@ -1,4 +1,4 @@
-import '../core/imports.dart';
+import '../../core/imports.dart';
 
 class RecordingButton extends StatelessWidget {
   final String modo;

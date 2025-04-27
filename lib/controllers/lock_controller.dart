@@ -334,4 +334,23 @@ class LockController {
       return logsData.map((data) => AccessLog.fromMap(data)).toList();
     });
   }
+
+  Stream<Map<String, int>> obtenerEstadoGlobalLocksDelUsuario() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Stream.value({'bloqueados': 0, 'desbloqueados': 0});
+    }
+
+    return _firestoreService
+        .streamLocksByUser(user.uid)
+        .map((locksData) {
+      final desbloqueados = locksData.where((lock) => !(lock['seguroActivo'] as bool)).length;
+      final bloqueados = locksData.where((lock) => (lock['seguroActivo'] as bool)).length;
+
+      return {
+        'bloqueados': bloqueados,
+        'desbloqueados': desbloqueados,
+      };
+    });
+  }
 }
