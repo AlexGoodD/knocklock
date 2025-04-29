@@ -1,4 +1,6 @@
-import '../core/imports.dart';
+import 'package:knocklock_flutter/screens/settings/about_screen.dart';
+
+import '../../core/imports.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -43,16 +45,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 20),
                 OptionButton(
-                  icon: Icons.wifi,
-                  title: 'Conexión de red',
-                  description: 'Ajusta direcciones IP y red local',
-                  onPressed: () {
-                    // Acción al presionar el botón
-                    print('Botón de configuración presionado');
-                  },
-                ),
-                const SizedBox(height: 20),
-                OptionButton(
                   icon: Icons.notifications_outlined,
                   title: 'Notificaciones',
                   description: 'Administra alertas importantes',
@@ -87,8 +79,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: 'Acerca de KnockLock',
                   description: 'Información de la app y versión',
                   onPressed: () {
-                    // Acción al presionar el botón
-                    print('Botón de configuración presionado');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AboutScreen()),
+                    );
                   },
                 ),
               ],

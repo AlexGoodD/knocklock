@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: LatestLogCard(
                       lockController: lockController,
                       onPressed: () {
-                        widget.onNavigateTo?.call(1); // 👈🏻 Cambia al tab 1 (Logs)
+                        widget.onNavigateTo?.call(1);
                       },
                     ),
                   ),

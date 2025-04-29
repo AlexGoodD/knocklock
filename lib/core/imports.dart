@@ -18,14 +18,20 @@ export 'package:knocklock_flutter/models/access_log.dart';
 
 //Screens
 export 'package:knocklock_flutter/screens/home_screen.dart';
+
 export 'package:knocklock_flutter/screens/locks/lock_grid_screen.dart';
 export 'package:knocklock_flutter/screens/locks/lock_detail_screen.dart';
+
 export 'package:knocklock_flutter/screens/logs_screen.dart';
+export 'package:knocklock_flutter/screens/security_screen.dart';
+
+export 'package:knocklock_flutter/screens/auth/auth_screen.dart';
 export 'package:knocklock_flutter/screens/auth/login_content.dart';
 export 'package:knocklock_flutter/screens/auth/register_content.dart';
-export 'package:knocklock_flutter/screens/security_screen.dart';
-export 'package:knocklock_flutter/screens/settings_screen.dart';
-export 'package:knocklock_flutter/screens/auth/auth_screen.dart';
+
+export 'package:knocklock_flutter/screens/settings/settings_screen.dart';
+export 'package:knocklock_flutter/screens/settings/about_screen.dart';
+
 
 //Core
 export 'package:knocklock_flutter/core/colors.dart';
