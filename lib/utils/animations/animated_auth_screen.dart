@@ -20,8 +20,7 @@ class _AnimatedAuthScreenState extends State<AnimatedAuthScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Column(
+      body: Column(
           children: [
             const Expanded(
               flex: 1,
@@ -45,7 +44,6 @@ class _AnimatedAuthScreenState extends State<AnimatedAuthScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 }
