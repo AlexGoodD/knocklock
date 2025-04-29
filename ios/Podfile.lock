@@ -1188,6 +1188,8 @@ PODS:
     - abseil/meta/type_traits
     - abseil/xcprivacy
   - abseil/xcprivacy (1.20240722.0)
+  - audio_waveforms (0.0.1):
+    - Flutter
   - BoringSSL-GRPC (0.0.37):
     - BoringSSL-GRPC/Implementation (= 0.0.37)
     - BoringSSL-GRPC/Interface (= 0.0.37)
@@ -1400,6 +1402,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - audio_waveforms (from `.symlinks/plugins/audio_waveforms/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
@@ -1433,6 +1436,8 @@ SPEC REPOS:
     - RecaptchaInterop
 
 EXTERNAL SOURCES:
+  audio_waveforms:
+    :path: ".symlinks/plugins/audio_waveforms/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   device_info_plus:
@@ -1452,6 +1457,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
+  audio_waveforms: a6dde7fe7c0ea05f06ffbdb0f7c1b2b2ba6cedcf
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   cloud_firestore: 07742f115155e19201e77b4cafb155011892d7b7
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe

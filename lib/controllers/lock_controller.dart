@@ -14,11 +14,13 @@ class LockController {
   final ValueNotifier<bool> bloqueActivo = ValueNotifier<bool>(false);
 
   final Map<String, ValueNotifier<bool>> dispositivosConectados = {};
+  final Map<String, ValueNotifier<bool>> segurosActivosPorLock = {};
 
   String? _lockId;
   StreamSubscription<String>? _webSocketSubscription;
   BuildContext? dialogContext;
   Timer? _verificacionTimer;
+  Timer? _bloqueoCheckerTimer;
 
   void conectar(String ip, String lockId) async {
     final url = 'ws://$ip/ws';
@@ -74,6 +76,10 @@ class LockController {
       if (!dispositivosConectados.containsKey(lock.id)) {
         dispositivosConectados[lock.id] = ValueNotifier<bool>(false);
         verificarConexion(lock.ip, lock.id);
+      }
+
+      if (!segurosActivosPorLock.containsKey(lock.id)) {
+        segurosActivosPorLock[lock.id] = ValueNotifier<bool>(lock.seguroActivo);
       }
     }
   }
@@ -195,7 +201,17 @@ class LockController {
   }
 
   Future<void> iniciarVerificacion(BuildContext context, Lock lock) async {
+    final lockDoc = await _firestoreService.getLockById(lock.id);
+    final data = lockDoc.data();
+    final bloqueoActivo = data?['bloqueoActivo'] ?? false;
+
+    if (bloqueoActivo) {
+      return;
+    }
+
+    // Si no está bloqueado, continuar normalmente
     enviarComando("START_VERIFICACION");
+
     try {
       final snapshot = await _realtimeDBService.getPattern(lock.id);
 
@@ -257,6 +273,7 @@ class LockController {
           name: data['name'] ?? '',
           ip: data['ip'] ?? '',
           seguroActivo: data['seguroActivo'] ?? false,
+          bloqueoActivo: data['bloqueoActivo'] ?? false,
         );
       }).toList();
     });
@@ -286,10 +303,22 @@ class LockController {
   }
 
   Future<void> cambiarEstadoSeguro(String lockId, bool nuevoEstado) async {
+    final lockDoc = await _firestoreService.getLockById(lockId);
+    final data = lockDoc.data();
+    final bloqueoActivo = data?['bloqueoActivo'] ?? false;
+
+    if (bloqueoActivo) {
+      print('No puedes cambiar el estado porque el dispositivo está bloqueado.');
+      return;
+    }
+
     try {
       await _firestoreService.updateLockSecureState(lockId, nuevoEstado);
       await _realtimeDBService.updateLockSecureState(lockId, nuevoEstado);
-      seguroActivo.value = nuevoEstado;
+
+      // ACTUALIZAR el ValueNotifier asociado
+      segurosActivosPorLock[lockId]?.value = nuevoEstado;
+
     } catch (e) {
       print("Error al cambiar estado de seguroActivo: $e");
     }
@@ -315,6 +344,7 @@ class LockController {
               name: 'Desconocido',
               ip: '0.0.0.0',
               seguroActivo: false,
+              bloqueoActivo: false,
             ),
           );
           return MapEntry(log, lock);
@@ -352,5 +382,104 @@ class LockController {
         'desbloqueados': desbloqueados,
       };
     });
+  }
+
+  Future<void> bloquearTodosLosLocks() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('⚠️ Usuario no autenticado');
+      return;
+    }
+
+    try {
+      final locks = await _firestoreService.getLocksByUser(user.uid);
+      final now = DateTime.now();
+      final bloqueoTermina = now.add(const Duration(hours: 1)); // 1 hora de bloqueo
+
+      for (final lock in locks) {
+        final lockId = lock['id'];
+
+        // Actualizar en Firestore
+        await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
+          'seguroActivo': true,
+          'bloqueoActivo': true,
+          'bloqueoTimestamp': Timestamp.fromDate(bloqueoTermina),
+        });
+
+        // Actualizar también en Realtime Database si quieres
+        await _realtimeDBService.bloquearLock(lockId, bloqueoTermina);
+      }
+
+      print('✅ Todos los locks han sido bloqueados correctamente');
+    } catch (e) {
+      print('❌ Error al bloquear todos los locks: $e');
+    }
+  }
+
+  void iniciarChequeoDesbloqueo() {
+    _bloqueoCheckerTimer?.cancel(); // por si ya estaba corriendo
+
+    _bloqueoCheckerTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final locks = await _firestoreService.getLocksByUser(user.uid);
+      final now = DateTime.now();
+
+      for (final lock in locks) {
+        final bloqueoActivo = lock['bloqueoActivo'] ?? false;
+        final bloqueoTimestamp = lock['bloqueoTimestamp'];
+
+        if (bloqueoActivo && bloqueoTimestamp != null) {
+          final fechaFin = (bloqueoTimestamp as Timestamp).toDate();
+
+          if (now.isAfter(fechaFin)) {
+            final lockId = lock['id'];
+
+            // Desbloquear en Firestore
+            await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
+              'seguroActivo': false,
+              'bloqueoActivo': false,
+              'bloqueoTimestamp': null,
+            });
+
+            // También desbloquear en RTDB
+            await _realtimeDBService.desbloquearLock(lockId);
+
+            print('🔓 Lock $lockId desbloqueado automáticamente');
+          }
+        }
+      }
+    });
+  }
+
+  void detenerChequeoDesbloqueo() {
+    _bloqueoCheckerTimer?.cancel();
+  }
+
+  Future<void> activarSeguroTodosLosLocks() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('⚠️ Usuario no autenticado');
+      return;
+    }
+
+    try {
+      final locks = await _firestoreService.getLocksByUser(user.uid);
+
+      for (final lock in locks) {
+        final lockId = lock['id'];
+
+        await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
+          'seguroActivo': true,
+        });
+
+        await _realtimeDBService.updateLockSecureState(lockId, true);
+      }
+
+      print('🔒 Todos los locks ahora tienen seguroActivo = true');
+    } catch (e) {
+      print('❌ Error al activar seguro en todos los locks: $e');
+    }
   }
 }

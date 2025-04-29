@@ -5,7 +5,8 @@ class GlobalStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LockController _lockController = LockController();
+
+    final LockController lockController = LockController();
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -23,7 +24,7 @@ class GlobalStatusCard extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             StreamBuilder<Map<String, int>>(
-              stream: _lockController.obtenerEstadoGlobalLocksDelUsuario(),
+              stream: lockController.obtenerEstadoGlobalLocksDelUsuario(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
@@ -35,15 +36,15 @@ class GlobalStatusCard extends StatelessWidget {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _statusBox('$desbloqueados desbloqueados', AppColors.successTextColor, AppColors.successBackgroundColor, AppColors.successTextColor),
-                    _statusBox('$bloqueados bloqueados', AppColors.errorTextColor, AppColors.errorBackgroundColor, AppColors.errorTextColor),
+                    _statusBox(context, '$desbloqueados desbloqueados', AppColors.successTextColor, AppColors.successBackgroundColor, AppColors.successTextColor),
+                    _statusBox(context, '$bloqueados bloqueados', AppColors.errorTextColor, AppColors.errorBackgroundColor, AppColors.errorTextColor),
                   ],
                 );
               },
             ),
             const SizedBox(height: 15),
             StreamBuilder<List<MapEntry<AccessLog, Lock>>>(
-              stream: _lockController.obtenerLogsConLocks(),
+              stream: lockController.obtenerLogsConLocks(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
@@ -81,7 +82,7 @@ class GlobalStatusCard extends StatelessWidget {
                           'Último intento: $estado en $nombreLock – $tiempoTranscurrido',
                           style: const TextStyle(
                             color: AppColors.warningTextColor,
-                            fontSize: 12,
+                            fontSize: 11,
                           ),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
@@ -100,21 +101,23 @@ class GlobalStatusCard extends StatelessWidget {
   }
 
 
-  Widget _statusBox(String text, Color color, Color background, Color borderColor) {
+  Widget _statusBox(BuildContext context, String text, Color color, Color background, Color borderColor) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      width: 145,
+      width: screenWidth * 0.32,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: background,
         border: Border.all(color: borderColor, width: 1),
-        borderRadius: BorderRadius.circular(5)
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
         text,
         style: TextStyle(
           color: color,
           fontWeight: FontWeight.bold,
-          fontSize: 12,
+          fontSize: 11,
         ),
         textAlign: TextAlign.center,
       ),

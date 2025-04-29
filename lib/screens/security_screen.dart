@@ -14,42 +14,58 @@ class _SecurityScreenState extends State<SecurityScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(35.0, 100.0, 35.0, 0.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Control de Seguridad',
-              style: AppTextStyles.sectionPrimaryStyle,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Gestiona el estado de todos tus dispositivos',
-              style: AppTextStyles.sectionSecondaryStyle,
-            ),
-            const SizedBox(height: 35),
-            const BlockAllButton(),
-            const SizedBox(height: 35),
-            const GlobalStatusCard(),
-            const SizedBox(height: 35),
-            Row(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(30.0, 100.0, 30.0, 0.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TestModeButton(
-                  isTestMode: isTestMode,
-                  onSwitchChanged: (value) {
-                    setState(() {
-                      isTestMode = value;
-                    });
-                  },
+                Text(
+                  'Control de Seguridad',
+                  style: AppTextStyles.sectionPrimaryStyle,
                 ),
-                const TempBlockButton(),
+                SizedBox(height: 10),
+                Text(
+                  'Gestiona el estado de todos tus dispositivos',
+                  style: AppTextStyles.sectionSecondaryStyle,
+                ),
               ],
             ),
-            const SizedBox(height: 35),
-            const TotalBlockButton(),
-          ],
-        ),
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 0.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const BlockAllButton(),
+                  const SizedBox(height: 35),
+                  const GlobalStatusCard(),
+                  const SizedBox(height: 35),
+                  Row(
+                    children: [
+                      TestModeButton(
+                        isTestMode: isTestMode,
+                        onSwitchChanged: (value) {
+                          setState(() {
+                            isTestMode = value;
+                          });
+                        },
+                      ),
+                      const TempBlockButton(),
+                    ],
+                  ),
+                  const SizedBox(height: 35),
+                  const TotalBlockButton(),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 30),
+        ],
       ),
     );
   }

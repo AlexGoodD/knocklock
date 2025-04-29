@@ -23,7 +23,7 @@ class AuthWrapper extends StatelessWidget {
         } else if (snapshot.hasData) {
           return const MainNavigator();
         } else {
-          return const LoginScreen();
+          return const AuthScreen(); // 👈 Aquí el cambio clave
         }
       },
     );

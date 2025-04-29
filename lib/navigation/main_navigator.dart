@@ -8,8 +8,22 @@ class MainNavigator extends StatefulWidget {
 }
 
 class _MainNavigatorState extends State<MainNavigator> {
-  int _selectedIndex = 2; // Indice temporal
+  int _selectedIndex = 3;
   bool _showBottomBar = true;
+
+  final LockController _lockController = LockController();
+
+  @override
+  void initState() {
+    super.initState();
+    _lockController.iniciarChequeoDesbloqueo();
+  }
+
+  @override
+  void dispose() {
+    _lockController.detenerChequeoDesbloqueo();
+    super.dispose();
+  }
 
   void _onTap(int index) {
     setState(() {
@@ -34,46 +48,44 @@ class _MainNavigatorState extends State<MainNavigator> {
       ),
       const LogsScreen(),
       const SecurityScreen(),
-      const PlaceholderScreen(title: 'Settings'),
+      const SettingsScreen(),
     ];
 
-
     return Container(
-        decoration: const BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-        AppColors.backgroundTop,
-        AppColors.backgroundBottom,
-        ],
-    ),
-    ),
-    child: Scaffold(
-      backgroundColor: Colors.transparent,
-      body: IndexedStack(
-
-        index: _selectedIndex,
-        children: screens,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.backgroundTop,
+            AppColors.backgroundBottom,
+          ],
+        ),
       ),
-      bottomNavigationBar: AnimatedSlide(
-        offset: _showBottomBar ? Offset.zero : const Offset(0, 1),
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        child: AnimatedOpacity(
-          opacity: _showBottomBar ? 1 : 0,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: screens,
+        ),
+        bottomNavigationBar: AnimatedSlide(
+          offset: _showBottomBar ? Offset.zero : const Offset(0, 1),
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          child: BottomBar(
-            currentIndex: _selectedIndex,
-            onTap: _onTap,
+          child: AnimatedOpacity(
+            opacity: _showBottomBar ? 1 : 0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: BottomBar(
+              currentIndex: _selectedIndex,
+              onTap: _onTap,
+            ),
           ),
         ),
       ),
-    ),
     );
   }
-  }
+}
 
 class PlaceholderScreen extends StatelessWidget {
   final String title;

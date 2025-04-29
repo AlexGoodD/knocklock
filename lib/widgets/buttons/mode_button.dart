@@ -16,13 +16,16 @@ class ModeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        width: 110,
-        height: 120,
+        width: screenWidth * 0.23,
+        height: screenHeight * 0.13,
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primaryColor
@@ -42,8 +45,8 @@ class ModeButton extends StatelessWidget {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: 50,
-              height: 50,
+              width: screenWidth * 0.12,
+              height: screenWidth * 0.12,
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primaryColor : Colors.white,
                 border: isSelected
@@ -61,7 +64,7 @@ class ModeButton extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.white : AppColors.primaryColor,
+                color: isSelected ? Colors.white : AppColors.primaryColor, size: screenWidth * 0.05,
               ),
             ),
             const SizedBox(height: 10),

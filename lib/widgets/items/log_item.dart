@@ -17,7 +17,7 @@ class LogCard extends StatelessWidget {
         color: AppColors.backgroundHelperColor,
         elevation: 0.1,
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
           child: Row(
             children: [
               const SizedBox(width: 15),
@@ -29,7 +29,7 @@ class LogCard extends StatelessWidget {
                       '${lock.name} (${lock.ip})',
                       style: const TextStyle(
                         color: AppColors.primaryColor,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
@@ -41,7 +41,7 @@ class LogCard extends StatelessWidget {
                         const Icon(
                           Icons.calendar_today,
                           color: AppColors.primaryColor,
-                          size: 14,
+                          size: 12,
                         ),
                         const SizedBox(width: 5),
                         Text(

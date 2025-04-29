@@ -15,7 +15,7 @@ class _LogsScreenState extends State<LogsScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(35.0, 100.0, 35.0, 0.0),
+        padding: const EdgeInsets.fromLTRB(30.0, 100.0, 30.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

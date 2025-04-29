@@ -27,7 +27,7 @@ class QuickAccessModal extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -38,85 +38,39 @@ class QuickAccessModal extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            _buildButton(
-              context,
-              icon: Icons.lock,
+            SizedBox(height: 20),
+
+            OptionButton(
+              icon: Icons.build_outlined,
               title: 'Administrar Locks',
               description: 'Cambiar nombre/IP o eliminar un candado',
               onPressed: () {
-                console.log('Acción: Administrar Locks');
-                // Lógica para administrar candados
+                // Acción al presionar el botón
+                print('Botón de configuración presionado');
               },
             ),
-            const SizedBox(height: 10),
-            _buildButton(
-              context,
-              icon: Icons.settings,
+            SizedBox(height: 15),
+            OptionButton(
+              icon: Icons.science_outlined,
               title: 'Modo Prueba',
               description: 'Prueba patrones sin gastar intentos reales',
               onPressed: () {
-                console.log('Acción: Modo Prueba');
-                // Lógica para activar modo prueba
+                // Acción al presionar el botón
+                print('Botón de configuración presionado');
               },
             ),
-            const SizedBox(height: 10),
-            _buildButton(
-              context,
-              icon: Icons.info,
+            SizedBox(height: 15),
+            OptionButton(
+              icon: Icons.notifications_outlined,
               title: 'Notificaciones',
               description: 'Activa o silencia alertas de intentos fallidos',
               onPressed: () {
-                console.log('Acción: Notificaciones');
-                // Lógica para administrar notificaciones
+                // Acción al presionar el botón
+                print('Botón de configuración presionado');
               },
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildButton(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required String description,
-        required VoidCallback onPressed,
-      }) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        elevation: 0.1,
-        padding: const EdgeInsets.all(10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: AppColors.HelperBorderColor),
-        ),
-      ).copyWith(
-        overlayColor: MaterialStateProperty.all(Colors.transparent),
-        splashFactory: NoSplash.splashFactory,
-      ),
-      onPressed: onPressed,
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          Icon(icon, color: Colors.blue),
-          const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTextStyles.primaryModalStyle
-              ),
-              Text(
-                description,
-                  style: AppTextStyles.secondaryModalStyle
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

@@ -148,4 +148,14 @@ class FirestoreService {
       }).toList();
     });
   }
+
+  Future<void> registerUser(String uid, String firstName, String lastName, String email) async {
+    await _firestore.collection('users').doc(uid).set({
+      'uid': uid,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
 }
