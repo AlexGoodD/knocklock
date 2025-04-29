@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const AboutScreen()),
+                      RouteTransitions.slideTransition(const AboutScreen()),
                     );
                   },
                 ),

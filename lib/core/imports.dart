@@ -45,9 +45,11 @@ export 'package:knocklock_flutter/services/firebase_auth_service.dart';
 //Widgets
 export 'package:knocklock_flutter/widgets/quick_access_modal.dart';
 export 'package:knocklock_flutter/widgets/bottom_bar.dart';
-export 'package:knocklock_flutter/widgets/input_auth.dart';
+export 'package:knocklock_flutter/widgets/add_new_lock_modal.dart';
 
-export 'package:knocklock_flutter/widgets/dialogs/create_dialog.dart';
+export 'package:knocklock_flutter/widgets/inputs/input_auth.dart';
+export 'package:knocklock_flutter/widgets/inputs/input_add_lock.dart';
+
 export 'package:knocklock_flutter/widgets/dialogs/token_dialog.dart';
 
 export 'package:knocklock_flutter/widgets/items/latest_log_access.dart';
@@ -73,13 +75,16 @@ export 'package:knocklock_flutter/navigation/main_navigator.dart';
 export 'package:knocklock_flutter/controllers/lock_controller.dart';
 
 // Utils
-export 'package:vibration/vibration.dart';
 export 'package:knocklock_flutter/utils/animations/animation_push_helper.dart';
 export 'package:knocklock_flutter/utils/decorations/circular_box_decoration.dart';
 export 'package:knocklock_flutter/utils/animations/animated_recording_icon.dart';
-export 'package:rxdart/rxdart.dart';
-export 'package:knocklock_flutter/utils/logs/status_log.dart';
+export 'package:knocklock_flutter/utils/animations/animated_auth_screen.dart';
+export 'package:knocklock_flutter/utils/animations/route_transition.dart';
+
 export 'package:knocklock_flutter/utils/helpers/time_utils.dart';
 export 'package:knocklock_flutter/utils/helpers/calcular_tiempo_bloqueo.dart';
-export 'package:knocklock_flutter/utils/animations/animated_auth_screen.dart';
 
+export 'package:rxdart/rxdart.dart';
+export 'package:vibration/vibration.dart';
+
+export 'package:knocklock_flutter/utils/logs/status_log.dart';

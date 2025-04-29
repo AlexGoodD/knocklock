@@ -32,10 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void showAddLockDialog() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return CreateDialog(
+        return AddNewLockModal(
           nameController: nameController,
           ipController: ipController,
           onAdd: addLock,
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text('Bienvenido de vuelta', style: TextStyle(color: AppColors.primaryColor, fontSize: 14)),
                           ],
                         ),
-                        ButtonAddLock(onPressed: showAddLockDialog),
+                        ButtonAddLock( onPressed: showAddLockDialog),
                       ],
                     ),
                   ),

@@ -4,7 +4,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
-    home: const AuthWrapper(),
+    home: const MainNavigator(),
   ));
 }
 
@@ -23,7 +23,7 @@ class AuthWrapper extends StatelessWidget {
         } else if (snapshot.hasData) {
           return const MainNavigator();
         } else {
-          return const AuthScreen(); // 👈 Aquí el cambio clave
+          return const AuthScreen();
         }
       },
     );
