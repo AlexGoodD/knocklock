@@ -1,4 +1,4 @@
-import '../core/imports.dart';
+import '../../core/imports.dart';
 
 Map<String, dynamic> calcularEstadoBloqueo(List<Map<String, dynamic>> locks) {
   bool bloqueoActivado = false;

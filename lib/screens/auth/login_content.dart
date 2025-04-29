@@ -1,4 +1,4 @@
-import '../core/imports.dart';
+import '../../core/imports.dart';
 
 class LoginContent extends StatelessWidget {
   final VoidCallback onToggle;

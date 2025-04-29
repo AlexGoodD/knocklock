@@ -18,14 +18,14 @@ export 'package:knocklock_flutter/models/access_log.dart';
 
 //Screens
 export 'package:knocklock_flutter/screens/home_screen.dart';
-export 'package:knocklock_flutter/screens/lock_grid_screen.dart';
-export 'package:knocklock_flutter/screens/lock_detail_screen.dart';
+export 'package:knocklock_flutter/screens/locks/lock_grid_screen.dart';
+export 'package:knocklock_flutter/screens/locks/lock_detail_screen.dart';
 export 'package:knocklock_flutter/screens/logs_screen.dart';
-export 'package:knocklock_flutter/screens/login_content.dart';
-export 'package:knocklock_flutter/screens/register_content.dart';
+export 'package:knocklock_flutter/screens/auth/login_content.dart';
+export 'package:knocklock_flutter/screens/auth/register_content.dart';
 export 'package:knocklock_flutter/screens/security_screen.dart';
 export 'package:knocklock_flutter/screens/settings_screen.dart';
-export 'package:knocklock_flutter/screens/auth_screen.dart';
+export 'package:knocklock_flutter/screens/auth/auth_screen.dart';
 
 //Core
 export 'package:knocklock_flutter/core/colors.dart';
@@ -68,12 +68,12 @@ export 'package:knocklock_flutter/controllers/lock_controller.dart';
 
 // Utils
 export 'package:vibration/vibration.dart';
-export 'package:knocklock_flutter/utils/animation_push_helper.dart';
-export 'package:knocklock_flutter/utils/circular_box_decoration.dart';
-export 'package:knocklock_flutter/utils/animated_recording_icon.dart';
+export 'package:knocklock_flutter/utils/animations/animation_push_helper.dart';
+export 'package:knocklock_flutter/utils/decorations/circular_box_decoration.dart';
+export 'package:knocklock_flutter/utils/animations/animated_recording_icon.dart';
 export 'package:rxdart/rxdart.dart';
-export 'package:knocklock_flutter/utils/status_log.dart';
-export 'package:knocklock_flutter/utils/time_utils.dart';
-export 'package:knocklock_flutter/utils/calcular_tiempo_bloqueo.dart';
-export 'package:knocklock_flutter/utils/animated_auth_screen.dart';
+export 'package:knocklock_flutter/utils/logs/status_log.dart';
+export 'package:knocklock_flutter/utils/helpers/time_utils.dart';
+export 'package:knocklock_flutter/utils/helpers/calcular_tiempo_bloqueo.dart';
+export 'package:knocklock_flutter/utils/animations/animated_auth_screen.dart';
 

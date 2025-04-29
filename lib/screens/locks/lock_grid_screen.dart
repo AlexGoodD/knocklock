@@ -1,4 +1,4 @@
-import '../core/imports.dart';
+import '../../core/imports.dart';
 
 class LockGridScreen extends StatelessWidget {
   final bool isExpanded;
