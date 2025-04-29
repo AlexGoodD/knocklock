@@ -31,7 +31,8 @@ export 'package:knocklock_flutter/screens/auth/register_content.dart';
 
 export 'package:knocklock_flutter/screens/settings/settings_screen.dart';
 export 'package:knocklock_flutter/screens/settings/about_screen.dart';
-
+export 'package:knocklock_flutter/screens/settings/notifications_screen.dart';
+export 'package:knocklock_flutter/screens/settings/account_screen.dart';
 
 //Core
 export 'package:knocklock_flutter/core/colors.dart';
@@ -48,13 +49,15 @@ export 'package:knocklock_flutter/widgets/bottom_bar.dart';
 export 'package:knocklock_flutter/widgets/add_new_lock_modal.dart';
 
 export 'package:knocklock_flutter/widgets/inputs/input_auth.dart';
-export 'package:knocklock_flutter/widgets/inputs/input_add_lock.dart';
+export 'package:knocklock_flutter/widgets/inputs/general_input.dart';
 
 export 'package:knocklock_flutter/widgets/dialogs/token_dialog.dart';
 
 export 'package:knocklock_flutter/widgets/items/latest_log_access.dart';
 export 'package:knocklock_flutter/widgets/items/log_item.dart';
 export 'package:knocklock_flutter/widgets/items/lock_item.dart';
+export 'package:knocklock_flutter/widgets/items/section_about_item.dart';
+
 export 'package:knocklock_flutter/widgets/items/global_status_card.dart';
 
 export 'package:knocklock_flutter/widgets/buttons/button_add_lock.dart';
@@ -66,6 +69,7 @@ export 'package:knocklock_flutter/widgets/buttons/total_block_button.dart';
 export 'package:knocklock_flutter/widgets/buttons/temp_block_button.dart';
 export 'package:knocklock_flutter/widgets/buttons/test_mode_button.dart';
 export 'package:knocklock_flutter/widgets/buttons/option_button.dart';
+export 'package:knocklock_flutter/widgets/buttons/switch_option_button.dart';
 export 'package:knocklock_flutter/widgets/buttons/auth_button.dart';
 
 //Navigator

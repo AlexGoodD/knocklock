@@ -7,6 +7,7 @@ class AppColors {
   static const Color secondaryBackgroundHelperColor = Color(0xFFFCFCFC);
   static const Color primaryColor = Color(0xFF000000);
   static const Color secondaryColor = Color(0xFF939393);
+  static const Color thirdColor = Color(0xFF6C6C6C);
   static const Color helperColor = Color(0xFFF6F6F6);
 
   static const Color errorTextColor = Color(0xFFFE7474);
@@ -26,7 +27,7 @@ class AppColors {
 
 class AppTextStyles {
 
-  static const TextStyle primaryTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.bold, fontSize: 22);
+  static const TextStyle primaryTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 22);
   static const TextStyle secondaryTextStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 15);
 
   static const TextStyle lockItemTitleStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15);
@@ -35,18 +36,24 @@ class AppTextStyles {
   static const TextStyle HelperPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle HelperSecondaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
-  static const TextStyle sectionPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 22);
-  static const TextStyle sectionSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 15);
+  static const TextStyle sectionPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 22);
+  static const TextStyle sectionSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w400, fontSize: 15);
 
   static const TextStyle HelperItemsPrimaryStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 18);
   static const TextStyle HelperItemsSecondaryStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
-  static const TextStyle primaryModalStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w900, fontSize: 15.5);
+  static const TextStyle primaryModalStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 15);
   static const TextStyle secondaryModalStyle = TextStyle(color: AppColors.secondaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 12);
 
-  static const TextStyle authTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Arial', fontWeight: FontWeight.w300, fontSize: 30);
-  static const TextStyle authBottomTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Arial', fontWeight: FontWeight.w300, fontSize: 14);
+  static const TextStyle authTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w300, fontSize: 30);
+  static const TextStyle authBottomTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w300, fontSize: 14);
 
   static const TextStyle authButtonTextStyle = TextStyle(color: AppColors.backgroundHelperColor, fontFamily: 'Roboto', fontWeight: FontWeight.w600, fontSize: 18);
+
+  static const TextStyle headerLabelTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 14);
+
+  static const TextStyle sectionAboutTitleTextStyle = TextStyle(color: AppColors.primaryColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 15);
+  static const TextStyle sectionAboutContentTextStyle = TextStyle(color: AppColors.thirdColor, fontFamily: 'Roboto', fontWeight: FontWeight.w400, fontSize: 14);
+
 
 }

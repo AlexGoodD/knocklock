@@ -53,9 +53,9 @@ class AddNewLockModal extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  InputAddLock(controller: nameController, label: 'Nombre del Lock'),
+                  GeneralInput(controller: nameController, label: 'Nombre del Lock'),
                   const SizedBox(height: 20),
-                  InputAddLock(controller: ipController, label: 'IP del Lock'),
+                  GeneralInput(controller: ipController, label: 'IP del Lock'),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: 340, // Ancho fijo

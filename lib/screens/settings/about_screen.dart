@@ -23,41 +23,112 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _CustomAppBar(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    Text(
+                      'Acerca de Nosotros',
+                      style: AppTextStyles.sectionPrimaryStyle,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Consulta la información general de la aplicación, versión actual, políticas y medios de contacto.',
+                      style: AppTextStyles.sectionSecondaryStyle,
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Section(
+                        title: 'Versión de la aplicación',
+                        content: 'Versión 1.2.3 - Abril 2025',
+                      ),
+                      SizedBox(height: 15),
+                      Section(
+                        title: 'Descripción del sistema',
+                        content:
+                        'KnockLock es un sistema de seguridad que permite desbloquear puertas mediante patrones personalizados de golpes, ofreciendo una alternativa práctica y segura a los métodos tradicionales.',
+                      ),
+                      SizedBox(height: 15),
+                      Section(
+                        title: 'Misión',
+                        content:
+                        'Proveer un método de acceso inteligente, intuitivo y seguro para situaciones donde las contraseñas o biometría no son viables.',
+                      ),
+                      SizedBox(height: 15),
+                      Section(
+                        title: 'Visión',
+                        content:
+                        'Convertirse en una solución líder en accesos físicos inteligentes, adaptable a distintos entornos residenciales y comerciales.',
+                      ),
+                      SizedBox(height: 15),
+                      Section(
+                        title: 'Equipo',
+                        items: [
+                          'Brayan Vallejo Solis – Integración de comunicación Wi-Fi',
+                          'Diego Alonso Noriega Bañuelos – Seguridad y validación de accesos vía Firestore',
+                          'Edwin Manuel Guerrero Martínez – Testing y pruebas de usuario',
+                          'Emmanuel Alejandro Chavarría Buendía – Líder de Proyecto & Desarrollo de App',
+                          'Guillermo Vladimir Flores Báez – Implementación de hardware (Arduino y sensores)',
+                          'Jorge Benito Mireles Mendoza – Documentación técnica y soporte',
+                          'Marcelo Treviño Juárez – UI/UX y diseño de interfaz móvil',
+                          'Victor Gerardo Villarreal Montero – Programación del algoritmo de verificación de patrones',
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Section(
+                        title: 'Términos y políticas',
+                        items: [
+                          'Términos de uso.',
+                          'Política de privacidad.',
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Section(
+                        title: 'Contacto y soporte',
+                        items: [
+                          'Correo: soporte@knocklock.com',
+                        ],
+                      ),
+                      SizedBox(height: 35),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Acerca de Nosotros',
-                    style: AppTextStyles.sectionPrimaryStyle,
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Creemos que tu seguridad es primordial',
-                    style: AppTextStyles.sectionSecondaryStyle,
-                  ),
-                  const SizedBox(height: 30),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            const SizedBox(height: 30),
-          ],
-        ),
+      ),
+    );
+  }
+}
+
+class _CustomAppBar extends StatelessWidget {
+  const _CustomAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: kToolbarHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      alignment: Alignment.centerLeft,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.pop(context),
       ),
     );
   }
