@@ -3,17 +3,19 @@ import 'package:knocklock_flutter/core/colors.dart';
 
 class GeneralInput extends StatelessWidget {
   // TODO Modificar elementos opcionales (controller/label)
-  final TextEditingController? controller;
+  final TextEditingController controller;
   final String? label;
   final String? headerLabel;
   final bool obscureText;
+  final bool enabled;
 
   const GeneralInput({
     super.key,
-    this.controller,
+    required this.controller,
     this.label,
     this.headerLabel,
     this.obscureText = false,
+    this.enabled = true,
   });
 
   @override
@@ -26,7 +28,7 @@ class GeneralInput extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               headerLabel!,
-              style: AppTextStyles.headerLabelTextStyle
+              style: AppTextStyles.headerLabelTextStyle,
             ),
           ),
         SizedBox(
@@ -47,6 +49,7 @@ class GeneralInput extends StatelessWidget {
             child: TextField(
               controller: controller,
               obscureText: obscureText,
+              enabled: enabled, // Controla si el input está habilitado
               decoration: InputDecoration(
                 labelText: label,
                 labelStyle: const TextStyle(color: Colors.black),

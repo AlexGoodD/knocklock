@@ -158,4 +158,16 @@ class FirestoreService {
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamUserById(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots();
+  }
+
+  Future<void> updateUserFields(String uid, Map<String, dynamic> data) async {
+    await _firestore.collection('users').doc(uid).update(data);
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserById(String uid) {
+    return _firestore.collection('users').doc(uid).get();
+  }
 }

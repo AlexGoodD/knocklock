@@ -42,6 +42,7 @@ export 'package:knocklock_flutter/services/websocket_service.dart';
 export 'package:knocklock_flutter/services/firestore_service.dart';
 export 'package:knocklock_flutter/services/realtime_database_service.dart';
 export 'package:knocklock_flutter/services/firebase_auth_service.dart';
+export 'package:knocklock_flutter/services/user_service.dart';
 
 //Widgets
 export 'package:knocklock_flutter/widgets/quick_access_modal.dart';
