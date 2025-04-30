@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isExpanded = false;
   bool showTopSection = true;
   bool displayTopSection = true;
-  final LockController lockController = LockController();
+  final lockController = LockController();
 
   void addLock() async {
     final name = nameController.text;
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.transparent,
                   child: InkResponse(
                     onTap: () async {
-                      await authService.logoutUser();
+                      authService.logoutUser(context);
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,

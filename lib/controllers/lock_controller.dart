@@ -2,6 +2,11 @@ import 'package:knocklock_flutter/core/imports.dart';
 import 'package:http/http.dart' as http;
 
 class LockController {
+  static final LockController _instance = LockController._internal();
+  factory LockController() => _instance;
+
+  LockController._internal();
+
   final WebSocketService _webSocketService = WebSocketService();
   final FirestoreService _firestoreService = FirestoreService();
   final RealtimeDatabaseService _realtimeDBService = RealtimeDatabaseService();
@@ -32,8 +37,12 @@ class LockController {
     });
 
     final doc = await _firestoreService.getLockById(lockId);
-    if (doc.exists && doc.data()?['seguroActivo'] != null) {
-      seguroActivo.value = doc.data()?['seguroActivo'];
+    if (doc.exists) {
+      final data = doc.data();
+      final activo = data?['seguroActivo'] ?? false;
+      seguroActivo.value = activo;
+      segurosActivosPorLock[lockId] = ValueNotifier<bool>(activo);
+      escucharEstadoSeguro(lockId);
     }
   }
 
@@ -81,6 +90,9 @@ class LockController {
       if (!segurosActivosPorLock.containsKey(lock.id)) {
         segurosActivosPorLock[lock.id] = ValueNotifier<bool>(lock.seguroActivo);
       }
+
+      // Escuchar cambios en tiempo real
+      escucharEstadoSeguro(lock.id);
     }
   }
 
@@ -316,8 +328,10 @@ class LockController {
       await _firestoreService.updateLockSecureState(lockId, nuevoEstado);
       await _realtimeDBService.updateLockSecureState(lockId, nuevoEstado);
 
-      // ACTUALIZAR el ValueNotifier asociado
-      segurosActivosPorLock[lockId]?.value = nuevoEstado;
+      // Actualizar el ValueNotifier asociado
+      if (segurosActivosPorLock.containsKey(lockId)) {
+        segurosActivosPorLock[lockId]!.value = nuevoEstado;
+      }
 
     } catch (e) {
       print("Error al cambiar estado de seguroActivo: $e");
@@ -481,5 +495,19 @@ class LockController {
     } catch (e) {
       print('❌ Error al activar seguro en todos los locks: $e');
     }
+  }
+
+  void escucharEstadoSeguro(String lockId) {
+    FirebaseFirestore.instance.collection('locks').doc(lockId).snapshots().listen((doc) {
+      final data = doc.data();
+      if (data != null && data.containsKey('seguroActivo')) {
+        final activo = data['seguroActivo'] as bool;
+        if (segurosActivosPorLock.containsKey(lockId)) {
+          segurosActivosPorLock[lockId]!.value = activo;
+        } else {
+          segurosActivosPorLock[lockId] = ValueNotifier<bool>(activo);
+        }
+      }
+    });
   }
 }

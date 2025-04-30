@@ -4,7 +4,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
-    home: const MainNavigator(),
+    home: const AuthScreen(),
   ));
 }
 

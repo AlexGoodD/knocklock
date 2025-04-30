@@ -22,12 +22,17 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
   void initState() {
     super.initState();
     _animationHelper = ScaleAnimationHelper(vsync: this);
+
+    // Asegura que se escucha el estado en Firestore si no está escuchando aún
     if (!widget.controller.segurosActivosPorLock.containsKey(widget.lock.id)) {
       widget.controller.segurosActivosPorLock[widget.lock.id] = ValueNotifier<bool>(widget.lock.seguroActivo);
+      widget.controller.escucharEstadoSeguro(widget.lock.id);
     }
   }
 
   void _handleTap(bool seguroActivoActual) {
+    print('Estado actual: seguroActivo=$seguroActivoActual, isRecording=${isRecording.value}');
+
     if (widget.lock.bloqueoActivo) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -41,18 +46,24 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
     _animationHelper.triggerAnimation();
 
     if (isRecording.value) {
-      // Si ya está grabando: detener grabación
       widget.controller.detenerVerificacion();
-      isRecording.value = false;
-    } else {
-      if (!seguroActivoActual) {
-        // Si el seguro está DESACTIVADO => Empezar grabación
-        widget.controller.iniciarVerificacion(context, widget.lock);
-        isRecording.value = true;
-      } else {
-        // Si el seguro está ACTIVADO => Bloquear el dispositivo
-        widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
+      setState(() {
         isRecording.value = false;
+      });
+      print('Deteniendo grabación...');
+    } else {
+      if (seguroActivoActual) {
+        widget.controller.iniciarVerificacion(context, widget.lock);
+        setState(() {
+          isRecording.value = true;
+        });
+        print('Iniciando grabación...');
+      } else {
+        widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
+        setState(() {
+          isRecording.value = false;
+        });
+        print('Bloqueando el dispositivo...');
       }
     }
   }
@@ -66,8 +77,14 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    final ValueNotifier<bool>? seguroNotifier = widget.controller.segurosActivosPorLock[widget.lock.id];
+
+    if (seguroNotifier == null) {
+      return const SizedBox.shrink(); // o algún placeholder si el estado no está listo
+    }
+
     return ValueListenableBuilder<bool>(
-      valueListenable: widget.controller.segurosActivosPorLock[widget.lock.id]!,
+      valueListenable: seguroNotifier,
       builder: (context, seguroActivoActual, _) {
         return GestureDetector(
           onTap: () => _handleTap(seguroActivoActual),

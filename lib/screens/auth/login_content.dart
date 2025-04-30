@@ -15,7 +15,14 @@ class LoginContent extends StatelessWidget {
       final password = passwordController.text;
       final user = await authService.loginUser(email, password);
       if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainNavigator()),
+        );
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al iniciar sesión')),
+        );
       }
     }
 

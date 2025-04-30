@@ -29,13 +29,14 @@ class RegisterContent extends StatelessWidget {
 
       final user = await authService.registerUser(email, password, firstName, lastName);
       if (user != null) {
-        await authService.logoutUser();
-
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Usuario registrado. Ahora inicia sesión')),
+          const SnackBar(content: Text('Registro correcto')),
         );
 
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AuthScreen()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error al registrar usuario')),

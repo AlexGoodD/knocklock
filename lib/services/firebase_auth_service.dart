@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:knocklock_flutter/services/firestore_service.dart';
 
+import '../core/imports.dart';
+
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -42,9 +44,14 @@ class FirebaseAuthService {
   }
 
   // Cerrar sesión
-  Future<void> logoutUser() async {
+  Future<void> logoutUser(BuildContext context) async {
     try {
       await _auth.signOut();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const AuthScreen()),
+            (route) => false, // Elimina todas las rutas anteriores
+      );
     } catch (e) {
       print('Error al cerrar sesión: $e');
     }

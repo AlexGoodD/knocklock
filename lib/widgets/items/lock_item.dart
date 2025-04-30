@@ -34,15 +34,18 @@ class _LockItemState extends State<LockItem> {
       builder: (context, isConnected, child) {
         return GestureDetector(
           onTap: isConnected
-              ? () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LockDetailScreen(
-                lock: widget.lock,
-                controller: widget.lockController,
+              ? () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LockDetailScreen(
+                  lock: widget.lock,
+                  controller: widget.lockController,
+                ),
               ),
-            ),
-          )
+            );
+            if (mounted) setState(() {});
+          }
               : null,
           child: Opacity(
             opacity: isConnected ? 1.0 : 0.5,
@@ -123,8 +126,7 @@ class _LockItemState extends State<LockItem> {
                     textAlign: TextAlign.left,
                   ),
                   ValueListenableBuilder<bool>(
-                    valueListenable: widget.lockController
-                        .segurosActivosPorLock[widget.lock.id]!,
+                    valueListenable: widget.lockController.segurosActivosPorLock[widget.lock.id]!,
                     builder: (context, seguroActivo, _) {
                       return Switch(
                         value: seguroActivo,
@@ -135,8 +137,7 @@ class _LockItemState extends State<LockItem> {
                         activeTrackColor: AppColors.primaryColor,
                         inactiveThumbColor: AppColors.backgroundHelperColor,
                         inactiveTrackColor: AppColors.secondaryColor,
-                        materialTapTargetSize:
-                        MaterialTapTargetSize.shrinkWrap,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       );
                     },
                   )
