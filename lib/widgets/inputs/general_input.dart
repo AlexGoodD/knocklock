@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:knocklock_flutter/core/colors.dart';
 
 class GeneralInput extends StatelessWidget {
-  // TODO Modificar elementos opcionales (controller/label)
   final TextEditingController controller;
   final String? label;
   final String? headerLabel;

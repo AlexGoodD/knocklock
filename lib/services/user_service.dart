@@ -24,6 +24,7 @@ class UserService {
     required String email,
     required String currentPassword,
     required String newPassword,
+    String? avatar, // 👈 añadido como opcional
   }) async {
     final user = _authService.auth.currentUser;
     if (user == null) throw Exception("Usuario no autenticado");
@@ -43,7 +44,6 @@ class UserService {
     final willUpdateEmail = email != user.email;
     final willUpdatePassword = newPassword.isNotEmpty;
 
-    // Solo reautenticar si es necesario
     if (willUpdateEmail || willUpdatePassword) {
       if (currentPassword.isEmpty) {
         throw Exception('Debes ingresar tu contraseña actual para actualizar el correo o la contraseña.');
@@ -66,8 +66,23 @@ class UserService {
       }
     }
 
+    // ✅ Añadir avatar si cambió
+    if (avatar != null && avatar != currentData['avatar']) {
+      updates['avatar'] = avatar;
+    }
+
     if (updates.isNotEmpty) {
       await _firestoreService.updateUserFields(user.uid, updates);
+    }
+  }
+
+  Future<void> updateAvatar(String newAvatar) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'avatar': newAvatar});
     }
   }
 }

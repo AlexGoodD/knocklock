@@ -1,5 +1,3 @@
-import 'dart:developer' as console;
-
 import '../../core/imports.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -17,8 +15,7 @@ class _AccountScreenState extends State<AccountScreen> {
   final TextEditingController _newPasswordController = TextEditingController();
 
   final UserService _userService = UserService();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  String? _selectedAvatar;
   bool _isEditing = false;
 
   Future<void> _updateUserData() async {
@@ -29,6 +26,7 @@ class _AccountScreenState extends State<AccountScreen> {
         email: _emailController.text.trim(),
         currentPassword: _currentPasswordController.text.trim(),
         newPassword: _newPasswordController.text.trim(),
+        avatar: _selectedAvatar,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,11 +37,27 @@ class _AccountScreenState extends State<AccountScreen> {
         _isEditing = false;
         _currentPasswordController.clear();
         _newPasswordController.clear();
+        _selectedAvatar = null; // Limpia después de guardar
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al actualizar los datos: $e')),
       );
+    }
+  }
+
+  void _showSelectAvatarModal(BuildContext context, String currentAvatar) async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => SelectAvatarModal(currentAvatar: currentAvatar),
+    );
+
+    if (selected != null && selected != _selectedAvatar) {
+      setState(() {
+        _selectedAvatar = selected;
+      });
     }
   }
 
@@ -125,6 +139,15 @@ class _AccountScreenState extends State<AccountScreen> {
                   const SizedBox(height: 10),
                   const Text('Administra tu perfil y preferencias', style: AppTextStyles.sectionSecondaryStyle),
                   const SizedBox(height: 30),
+                  Center( // Centra el CircularProfileButton
+                    child: CircularProfileButton(
+                      imageUrl: '${_selectedAvatar ?? userData['avatar'] ?? 'avatar1.png'}',
+                      onPressed: _isEditing
+                          ? () => _showSelectAvatarModal(context, userData['avatar'] ?? 'avatar1.png')
+                          : () {},
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                   GeneralInput(
                     headerLabel: 'Nombre(s)',
                     controller: _firstNameController,
@@ -159,7 +182,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     obscureText: true,
                     enabled: _isEditing,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                 ],
               ),
             );

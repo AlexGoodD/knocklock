@@ -45,9 +45,11 @@ export 'package:knocklock_flutter/services/firebase_auth_service.dart';
 export 'package:knocklock_flutter/services/user_service.dart';
 
 //Widgets
-export 'package:knocklock_flutter/widgets/quick_access_modal.dart';
+export 'package:knocklock_flutter/widgets/modals/add_new_lock_modal.dart';
+export 'package:knocklock_flutter/widgets/modals/quick_access_modal.dart';
+export 'package:knocklock_flutter/widgets/modals/select_avatar_modal.dart';
+
 export 'package:knocklock_flutter/widgets/bottom_bar.dart';
-export 'package:knocklock_flutter/widgets/add_new_lock_modal.dart';
 
 export 'package:knocklock_flutter/widgets/inputs/input_auth.dart';
 export 'package:knocklock_flutter/widgets/inputs/general_input.dart';
@@ -58,7 +60,7 @@ export 'package:knocklock_flutter/widgets/items/latest_log_access.dart';
 export 'package:knocklock_flutter/widgets/items/log_item.dart';
 export 'package:knocklock_flutter/widgets/items/lock_item.dart';
 export 'package:knocklock_flutter/widgets/items/section_about_item.dart';
-
+export 'package:knocklock_flutter/widgets/items/avatar_icon.dart';
 export 'package:knocklock_flutter/widgets/items/global_status_card.dart';
 
 export 'package:knocklock_flutter/widgets/buttons/button_add_lock.dart';
