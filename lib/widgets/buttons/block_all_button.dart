@@ -57,7 +57,7 @@ class _BlockAllButtonState extends State<BlockAllButton> with SingleTickerProvid
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
-              const Icon(Icons.lock, color: Colors.white, size: 50),
+              const Icon(Icons.lock_outline, color: Colors.white, size: 50),
               const SizedBox(width: 15),
               Expanded(
                 child: Column(
