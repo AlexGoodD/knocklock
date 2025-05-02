@@ -1,9 +1,14 @@
-import 'dart:developer' as console;
-
 import 'package:knocklock_flutter/core/imports.dart';
 
-class QuickAccessModal extends StatelessWidget {
+class QuickAccessModal extends StatefulWidget {
   const QuickAccessModal({super.key});
+
+  @override
+  State<QuickAccessModal> createState() => _QuickAccessModalState();
+}
+
+class _QuickAccessModalState extends State<QuickAccessModal> {
+  bool isTestMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +55,15 @@ class QuickAccessModal extends StatelessWidget {
               },
             ),
             SizedBox(height: 15),
-            OptionButton(
+            SwitchOptionButton(
               icon: Icons.science_outlined,
               title: 'Modo Prueba',
-              description: 'Prueba patrones sin gastar intentos reales',
-              onPressed: () {
-                // Acción al presionar el botón
-                print('Botón de configuración presionado');
+              description: 'Prueba patrones sin gastar intentos',
+              initialValue: isTestMode,
+              onChanged: (value) {
+                setState(() {
+                  isTestMode = value;
+                });
               },
             ),
             SizedBox(height: 15),
@@ -65,8 +72,10 @@ class QuickAccessModal extends StatelessWidget {
               title: 'Notificaciones',
               description: 'Activa o silencia alertas de intentos fallidos',
               onPressed: () {
-                // Acción al presionar el botón
-                print('Botón de configuración presionado');
+                Navigator.push(
+                  context,
+                  RouteTransitions.slideTransition(const NotificationsScreen()),
+                );
               },
             ),
           ],

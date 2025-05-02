@@ -14,10 +14,34 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ipController = TextEditingController();
   final authService = FirebaseAuthService();
+  final firestoreService = FirestoreService();
   bool isExpanded = false;
   bool showTopSection = true;
   bool displayTopSection = true;
   final lockController = LockController();
+  String firstName = '';
+  StreamSubscription<Map<String, dynamic>?>? _userDataSubscription;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _subscribeToUserFirstName();
+  }
+
+  void _subscribeToUserFirstName() {
+    _userDataSubscription = firestoreService.getCurrentUserData().listen((userData) {
+      if (userData != null && mounted) {
+        setState(() {
+          final fullName = userData['firstName'] ?? '';
+          final rawFirstName = fullName.split(' ').first;
+          firstName = rawFirstName.length > 7
+              ? '${rawFirstName.substring(0, 7)}...'
+              : rawFirstName;
+        });
+      }
+    });
+  }
 
   void addLock() async {
     final name = nameController.text;
@@ -77,6 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _userDataSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -117,8 +147,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Material(
                   color: Colors.transparent,
                   child: InkResponse(
-                    onTap: () async {
-                      authService.logoutUser(context);
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        builder: (context) => const PerfilInfoModal(),
+                      );
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
@@ -152,8 +187,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text('Hola Alejandro', style: AppTextStyles.primaryTextStyle),
+                          children: [
+                            Row(
+                              children: [
+                                Text('Hola ', style: AppTextStyles.primaryTextStyle),
+                                Text('$firstName', style: AppTextStyles.primaryTextStyle),
+                              ],
+                            ),
                             SizedBox(height: 5),
                             Text('Bienvenido de vuelta', style: TextStyle(color: AppColors.primaryColor, fontSize: 14)),
                           ],

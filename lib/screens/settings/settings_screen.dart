@@ -1,5 +1,3 @@
-import 'package:knocklock_flutter/screens/settings/about_screen.dart';
-
 import '../../core/imports.dart';
 
 class SettingsScreen extends StatefulWidget {

@@ -170,4 +170,25 @@ class FirestoreService {
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserById(String uid) {
     return _firestore.collection('users').doc(uid).get();
   }
+
+  Stream<Map<String, dynamic>?> getCurrentUserData() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return Stream.value(null);
+    }
+
+    return _firestore.collection('users').doc(user.uid).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        return {
+          'email': data?['email'],
+          'firstName': data?['firstName'],
+          'lastName': data?['lastName'],
+          'avatar': data?['avatar'],
+        };
+      }
+      return null;
+    });
+  }
 }

@@ -3,12 +3,12 @@ import '../../core/colors.dart';
 
 class CircularProfileButton extends StatelessWidget {
   final String imageUrl;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CircularProfileButton({
     Key? key,
     required this.imageUrl,
-    required this.onPressed,
+    this.onPressed,
   }) : super(key: key);
 
   @override

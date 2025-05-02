@@ -2,7 +2,7 @@ import '../../core/imports.dart';
 
 class LockDetailScreen extends StatefulWidget {
   final Lock lock;
-  final LockController controller; // 🔥 ahora recibe el controller
+  final LockController controller;
 
   const LockDetailScreen({
     super.key,
@@ -45,6 +45,7 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
         ),
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -100,7 +101,7 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                   const Spacer(),
                   ActionLockButton(
                     lock: widget.lock,
-                    controller: widget.controller, // 🔥 pasamos el mismo controller
+                    controller: widget.controller,
                   ),
                   const SizedBox(height: 20),
                   ValueListenableBuilder<String>(
@@ -184,21 +185,36 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ValueListenableBuilder<bool>(
-                        valueListenable: widget.controller.mostrarBotonGrabacion,
-                        builder: (context, mostrar, child) {
-                          return ValueListenableBuilder<String>(
-                            valueListenable: widget.controller.modoSeleccionado,
-                            builder: (context, modo, child) {
-                              return RecordingButton(
-                                modo: modo,
-                                mostrar: mostrar,
-                                onPatronTap: () {
-                                  widget.controller.iniciarGrabacion(context, widget.lock, "Patron");
-                                },
-                                onClaveTap: () {
-                                  widget.controller.iniciarGrabacion(context, widget.lock, "Clave");
-                                },
+                      ValueListenableBuilder<String>(
+                        valueListenable: widget.controller.modoSeleccionado,
+                        builder: (context, modo, child) {
+                          return ValueListenableBuilder<bool>(
+                            valueListenable: widget.controller.mostrarBotonGrabacion,
+                            builder: (context, mostrar, _) {
+
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (modo == "PATRÓN")
+                                    RecordingButton(
+                                      mostrar: mostrar,
+                                      onTap: () {
+                                        widget.controller.iniciarGrabacion(context, widget.lock, "Patron");
+                                      },
+                                    ),
+                                  if (modo == "CLAVE")
+                                    EnterButton(
+                                      mostrar: mostrar,
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) => const NewPasswordModal(),
+                                        );
+                                      },
+                                    ),
+                                ],
                               );
                             },
                           );

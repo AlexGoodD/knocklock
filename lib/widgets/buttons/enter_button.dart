@@ -1,10 +1,10 @@
 import '../../core/imports.dart';
 
-class RecordingButton extends StatelessWidget {
+class EnterButton extends StatelessWidget {
   final bool mostrar;
   final VoidCallback onTap;
 
-  const RecordingButton({
+  const EnterButton({
     super.key,
     required this.mostrar,
     required this.onTap,
@@ -27,7 +27,7 @@ class RecordingButton extends StatelessWidget {
               color: AppColors.backgroundHelperColor,
             ),
             child: Icon(
-              Icons.mic,
+              Icons.dialpad,
               color: Colors.black,
               size: 30,
             ),

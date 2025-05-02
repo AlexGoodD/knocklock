@@ -7,6 +7,10 @@ class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseAuth get auth => _auth;
 
+  User? getCurrentUser() {
+    return _auth.currentUser;
+  }
+
   // Registro de usuario
   Future<User?> registerUser(String email, String password, String firstName, String lastName) async {
     try {

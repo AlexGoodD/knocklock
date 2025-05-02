@@ -338,10 +338,13 @@ class LockController {
     }
   }
 
-  void seleccionarModo(String modo) {
+  void seleccionarModo(String modo) async {
     modoSeleccionado.value = modo;
-  }
 
+    if (_lockId != null) {
+      await guardarModo(_lockId!);
+    }
+  }
   Stream<List<MapEntry<AccessLog, Lock>>> obtenerLogsConLocks() {
     final logsStream = obtenerLogsAcceso();
     final locksStream = obtenerLocks();

@@ -7,6 +7,7 @@ class GeneralInput extends StatelessWidget {
   final String? headerLabel;
   final bool obscureText;
   final bool enabled;
+  final double? width;
 
   const GeneralInput({
     super.key,
@@ -15,6 +16,7 @@ class GeneralInput extends StatelessWidget {
     this.headerLabel,
     this.obscureText = false,
     this.enabled = true,
+    this.width,
   });
 
   @override
@@ -31,7 +33,7 @@ class GeneralInput extends StatelessWidget {
             ),
           ),
         SizedBox(
-          width: 340,
+          width: width ?? MediaQuery.of(context).size.width * 0.8,
           height: 65,
           child: Container(
             decoration: BoxDecoration(
@@ -48,7 +50,7 @@ class GeneralInput extends StatelessWidget {
             child: TextField(
               controller: controller,
               obscureText: obscureText,
-              enabled: enabled, // Controla si el input está habilitado
+              enabled: enabled,
               decoration: InputDecoration(
                 labelText: label,
                 labelStyle: const TextStyle(color: Colors.black),

@@ -9,6 +9,15 @@ class LogsScreen extends StatefulWidget {
 
 class _LogsScreenState extends State<LogsScreen> {
   final LockController lockController = LockController();
+  final ScrollController _scrollController = ScrollController();
+
+  void scrollToTop() {
+    _scrollController.animateTo(
+      0.0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +64,7 @@ class _LogsScreenState extends State<LogsScreen> {
                   }
 
                   return ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.zero,
                     itemCount: entries.length,
                     itemBuilder: (context, index) {

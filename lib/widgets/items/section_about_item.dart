@@ -17,11 +17,6 @@ class Section extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 340,
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.thirdColor, width: 1),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

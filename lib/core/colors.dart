@@ -23,6 +23,8 @@ class AppColors {
   static const Color trueConnectionColor = Color(0xFF00A500);
   static const Color falseConnectionColor = Color(0xFFA50003);
 
+  static const Color helperInputColor = Color(0xFFEFEFEF);
+
 }
 
 class AppTextStyles {

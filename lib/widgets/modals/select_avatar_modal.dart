@@ -89,10 +89,16 @@ class _SelectAvatarModalState extends State<SelectAvatarModal> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+        onPressed: () {
                 Navigator.pop(context, _selectedAvatar);
               },
-              child: const Text('Seleccionar avatar'),
+              child: Text('Seleccionar avatar', style: AppTextStyles.authButtonTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 15),),
             )
           ],
         ),

@@ -90,13 +90,6 @@ class _AboutScreenState extends State<AboutScreen> {
                         ],
                       ),
                       SizedBox(height: 15),
-                      Section(
-                        title: 'Términos y políticas',
-                        items: [
-                          'Términos de uso.',
-                          'Política de privacidad.',
-                        ],
-                      ),
                       SizedBox(height: 15),
                       Section(
                         title: 'Contacto y soporte',
@@ -118,7 +111,7 @@ class _AboutScreenState extends State<AboutScreen> {
 }
 
 class _CustomAppBar extends StatelessWidget {
-  const _CustomAppBar({super.key});
+  const _CustomAppBar();
 
   @override
   Widget build(BuildContext context) {
