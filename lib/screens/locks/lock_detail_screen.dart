@@ -182,16 +182,16 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                     },
                   ),
                   const SizedBox(height: 100),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ValueListenableBuilder<String>(
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.topCenter,
+                    child: ValueListenableBuilder<String>(
                         valueListenable: widget.controller.modoSeleccionado,
                         builder: (context, modo, child) {
                           return ValueListenableBuilder<bool>(
                             valueListenable: widget.controller.mostrarBotonGrabacion,
                             builder: (context, mostrar, _) {
-
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -214,13 +214,25 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                         );
                                       },
                                     ),
+                                  if (modo == "TOKEN")
+                                    EnterButton(
+                                      IconName: Icons.shuffle,
+                                      mostrar: mostrar,
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) => TokenModal(lockId: widget.lock.id),
+                                        );
+                                      },
+                                    ),
                                 ],
                               );
                             },
                           );
                         },
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 70),
                 ],

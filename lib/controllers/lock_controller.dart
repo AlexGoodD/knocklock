@@ -122,6 +122,12 @@ class LockController {
 
   Future<void> verificarPassword(String tipoPassword, BuildContext context, Lock lock) async {
     try {
+      // Si el seguro está activo, no mostrar el botón de grabación
+      if (segurosActivosPorLock[lock.id]?.value ?? false) {
+        mostrarBotonGrabacion.value = false;
+        return;
+      }
+
       final passwordDoc = await _firestoreService.getPassword(lock.id, tipoPassword);
 
       if (!passwordDoc.exists) {
@@ -132,10 +138,19 @@ class LockController {
       final data = passwordDoc.data();
       final value = data?['value'];
 
-      if (tipoPassword == 'Patron') {
-        mostrarBotonGrabacion.value = (value == null || (value is List && value.isEmpty));
-      } else if (tipoPassword == 'Clave') {
-        mostrarBotonGrabacion.value = (value == null || value.toString().trim().isEmpty);
+      switch (tipoPassword) {
+        case 'Patron':
+          mostrarBotonGrabacion.value = (value == null || (value is List && value.isEmpty));
+          break;
+
+        case 'Clave':
+        case 'Token':
+          mostrarBotonGrabacion.value = (value == null || value.toString().trim().isEmpty);
+          break;
+
+        default:
+          mostrarBotonGrabacion.value = false;
+          break;
       }
     } catch (e) {
       print('Error al verificar el password: $e');
@@ -342,12 +357,14 @@ class LockController {
     if (_lockId == null) return;
 
     final seguroBloqueado = segurosActivosPorLock[_lockId]?.value ?? false;
+
     if (seguroBloqueado) {
       return;
     }
 
     modoSeleccionado.value = modo;
     await guardarModo(_lockId!);
+
   }
 
   Stream<List<MapEntry<AccessLog, Lock>>> obtenerLogsConLocks() {
@@ -562,4 +579,21 @@ class LockController {
       return false;
     }
   }
+
+  Future<void> guardarToken(String lockId, String password, String tipoPassword) async {
+    try {
+      final hashedPassword = sha256.convert(utf8.encode(password)).toString();
+      await FirebaseFirestore.instance
+          .collection('locks')
+          .doc(lockId)
+          .collection('passwords')
+          .doc(tipoPassword)
+          .set({'value': hashedPassword});
+
+      print('✅ Contraseña guardada correctamente en $tipoPassword');
+    } catch (e) {
+      print('❌ Error al guardar la contraseña: $e');
+    }
+  }
+
 }
