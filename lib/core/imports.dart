@@ -3,6 +3,7 @@ export 'package:flutter/material.dart';
 export 'package:flutter/services.dart';
 export 'dart:async';
 export 'dart:convert';
+export 'package:crypto/crypto.dart';
 
 //Firebase
 export 'package:cloud_firestore/cloud_firestore.dart';
@@ -50,6 +51,7 @@ export 'package:knocklock_flutter/widgets/modals/quick_access_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/select_avatar_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/perfil_info_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/new_password_modal.dart';
+export 'package:knocklock_flutter/widgets/modals/enter_password_modal.dart';
 
 export 'package:knocklock_flutter/widgets/bottom_bar.dart';
 

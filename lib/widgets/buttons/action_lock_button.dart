@@ -33,6 +33,8 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
   void _handleTap(bool seguroActivoActual) {
     print('Estado actual: seguroActivo=$seguroActivoActual, isRecording=${isRecording.value}');
 
+
+
     if (widget.lock.bloqueoActivo) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -44,6 +46,22 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
     }
 
     _animationHelper.triggerAnimation();
+
+    // Verificar si el modo activo es "CLAVE"
+    if(seguroActivoActual) {
+      if (widget.controller.modoSeleccionado.value == "CLAVE") {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) => EnterPasswordModal(lockId: widget.lock.id),
+        );
+        return;
+      }
+    } else {
+      widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
+    }
+
 
     if (isRecording.value) {
       widget.controller.detenerVerificacion();

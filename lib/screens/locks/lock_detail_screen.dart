@@ -210,7 +210,7 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                           context: context,
                                           backgroundColor: Colors.transparent,
                                           isScrollControlled: true,
-                                          builder: (context) => const NewPasswordModal(),
+                                          builder: (context) => NewPasswordModal(lockId: widget.lock.id),
                                         );
                                       },
                                     ),

@@ -191,4 +191,20 @@ class FirestoreService {
       return null;
     });
   }
+
+  Future<void> saveAccess(String lockId, String estado) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('locks')
+          .doc(lockId)
+          .collection('accessLogs')
+          .add({
+        'estado': estado,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      print('✅ Acceso guardado correctamente');
+    } catch (e) {
+      print('❌ Error al guardar el acceso: $e');
+    }
+  }
 }

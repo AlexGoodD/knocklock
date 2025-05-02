@@ -339,12 +339,17 @@ class LockController {
   }
 
   void seleccionarModo(String modo) async {
-    modoSeleccionado.value = modo;
+    if (_lockId == null) return;
 
-    if (_lockId != null) {
-      await guardarModo(_lockId!);
+    final seguroBloqueado = segurosActivosPorLock[_lockId]?.value ?? false;
+    if (seguroBloqueado) {
+      return;
     }
+
+    modoSeleccionado.value = modo;
+    await guardarModo(_lockId!);
   }
+
   Stream<List<MapEntry<AccessLog, Lock>>> obtenerLogsConLocks() {
     final logsStream = obtenerLogsAcceso();
     final locksStream = obtenerLocks();
@@ -512,5 +517,49 @@ class LockController {
         }
       }
     });
+  }
+
+  Future<void> guardarClave(String lockId, String password) async {
+    try {
+      final bytes = utf8.encode(password);
+      final hashedPassword = sha256.convert(bytes).toString();
+      await FirebaseFirestore.instance
+          .collection('locks')
+          .doc(lockId)
+          .collection('passwords')
+          .doc('Clave')
+          .set({'value': hashedPassword});
+
+      print('✅ Contraseña guardada correctamente');
+    } catch (e) {
+      print('❌ Error al guardar la contraseña: $e');
+    }
+  }
+
+  Future<bool> verificarClave(String lockId, String passwordIngresada) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('locks')
+          .doc(lockId)
+          .collection('passwords')
+          .doc('Clave')
+          .get();
+
+      if (!doc.exists) {
+        print('⚠️ No se encontró una contraseña guardada');
+        return false;
+      }
+
+      final data = doc.data();
+      final hashedPasswordGuardada = data?['value'];
+
+      final bytes = utf8.encode(passwordIngresada);
+      final hashedPasswordIngresada = sha256.convert(bytes).toString();
+
+      return hashedPasswordGuardada == hashedPasswordIngresada;
+    } catch (e) {
+      print('❌ Error al verificar la contraseña: $e');
+      return false;
+    }
   }
 }

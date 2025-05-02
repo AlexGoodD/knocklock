@@ -2,46 +2,37 @@ import 'package:flutter/material.dart';
 import '../inputs/input_password.dart';
 import 'package:knocklock_flutter/core/imports.dart';
 
-class NewPasswordModal extends StatefulWidget {
+class EnterPasswordModal extends StatefulWidget {
   final String lockId;
 
-  const NewPasswordModal({
+  const EnterPasswordModal({
     super.key,
     required this.lockId,
   });
 
   @override
-  State<NewPasswordModal> createState() => _NewPasswordModalState();
+  State<EnterPasswordModal> createState() => _EnterPasswordModalState();
 }
 
-class _NewPasswordModalState extends State<NewPasswordModal> {
+class _EnterPasswordModalState extends State<EnterPasswordModal> {
   final GlobalKey<InputPasswordState> _passwordKey = GlobalKey<InputPasswordState>();
 
-  bool isConfirmingPassword = false;
-  String? firstPassword;
   final lockController = LockController();
+  final firestoreService = FirestoreService();
 
-  Future<void> _handleContinueOrConfirm() async {
+  Future<void> _handleVerifyPassword() async {
     final enteredPassword = _passwordKey.currentState?.password ?? '';
 
-    if (!isConfirmingPassword) {
-      firstPassword = enteredPassword;
-      _passwordKey.currentState?.clear();
-      setState(() {
-        isConfirmingPassword = true;
-      });
+    final isValid = await lockController.verificarClave(widget.lockId, enteredPassword);
+
+    if (isValid) {
+      await firestoreService.updateLockSecureState(widget.lockId, false);
+      await firestoreService.saveAccess(widget.lockId, 'Acceso correcto');
+      Navigator.pop(context);
     } else {
-      if (enteredPassword == firstPassword) {
-        print("Contraseñas iguales");
-        await lockController.guardarClave(widget.lockId, enteredPassword);
-        Navigator.pop(context, enteredPassword);
-      } else {
-        print("Contraseñas diferentes");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Las contraseñas no coinciden")),
-        );
-        _passwordKey.currentState?.clear();
-      }
+      await firestoreService.saveAccess(widget.lockId, 'Acceso fallido');
+      Navigator.pop(context);
+
     }
   }
 
@@ -66,9 +57,7 @@ class _NewPasswordModalState extends State<NewPasswordModal> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      isConfirmingPassword
-                          ? 'Confirma tu contraseña'
-                          : 'Crea una contraseña',
+                      'Ingresa tu contraseña',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -76,9 +65,7 @@ class _NewPasswordModalState extends State<NewPasswordModal> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      isConfirmingPassword
-                          ? 'Verifica tu contraseña para poder usarla'
-                          : 'Procura no olvidar tu contraseña porque la necesitarás al cambiar de modo.',
+                      'Si no recuerdas tu contraseña, no podrás cambiar el modo de tu dispositivo.',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -99,9 +86,9 @@ class _NewPasswordModalState extends State<NewPasswordModal> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: _handleContinueOrConfirm,
+                        onPressed: _handleVerifyPassword,
                         child: Text(
-                          isConfirmingPassword ? 'Confirmar' : 'Continuar',
+                          'Ingresar',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
