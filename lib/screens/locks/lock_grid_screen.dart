@@ -28,11 +28,14 @@ class LockGridScreen extends StatelessWidget {
                 style: AppTextStyles.HelperPrimaryStyle,
               ),
               AnimatedOpacity(
-                opacity: isExpanded ? 0 : 1,
+                opacity: isExpanded ? 0.0 : 1.0,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
-                child: IgnorePointer(
-                  ignoring: isExpanded,
+                child: Visibility(
+                  visible: !isExpanded,
+                  maintainState: true,
+                  maintainAnimation: true,
+                  maintainSize: true,
                   child: GestureDetector(
                     onTap: onToggle,
                     child: Row(
@@ -57,29 +60,34 @@ class LockGridScreen extends StatelessWidget {
             child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 35),
               physics: const BouncingScrollPhysics(),
-              itemCount: isExpanded ? locks.length : (locks.length > 4 ? 4 : locks.length),
+              itemCount: locks.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 30,
                 mainAxisSpacing: 30,
                 childAspectRatio: 1,
               ),
-                itemBuilder: (context, index) {
-                  final lock = locks[index];
-                  final isConnectedNotifier = lockController.dispositivosConectados[lock.id] ?? ValueNotifier<bool>(false);
-                  return ValueListenableBuilder<bool>(
-                    valueListenable: isConnectedNotifier,
-                    builder: (context, isConnected, child) {
-                      return LockItem(
-                        key: ValueKey(lock.id),
-                        name: lock.name,
-                        ip: lock.ip,
-                        lock: lock,
-                        lockController: lockController,
-                      );
-                    },
-                  );
+              itemBuilder: (context, index) {
+                if (!isExpanded && index >= 4) {
+                  return const SizedBox.shrink(); // Oculta los ítems adicionales sin romper el layout
                 }
+
+                final lock = locks[index];
+                final isConnectedNotifier = lockController.dispositivosConectados[lock.id] ?? ValueNotifier<bool>(false);
+
+                return ValueListenableBuilder<bool>(
+                  valueListenable: isConnectedNotifier,
+                  builder: (context, isConnected, child) {
+                    return LockItem(
+                      key: ValueKey(lock.id),
+                      name: lock.name,
+                      ip: lock.ip,
+                      lock: lock,
+                      lockController: lockController,
+                    );
+                  },
+                );
+              },
             ),
           ),
         )

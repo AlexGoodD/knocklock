@@ -7,8 +7,33 @@ class QuickAccessModal extends StatefulWidget {
   State<QuickAccessModal> createState() => _QuickAccessModalState();
 }
 
+
+
 class _QuickAccessModalState extends State<QuickAccessModal> {
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarEstadoModoPrueba();
+  }
+
+  Future<void> _cargarEstadoModoPrueba() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final locks = await FirestoreService().getLocksByUser(user.uid);
+    if (locks.isEmpty) return;
+
+    // Verifica si al menos uno tiene modoPrueba activo
+    final algunoEnModo = locks.any((lock) => lock['modoPrueba'] == true);
+
+    setState(() {
+      isTestMode = algunoEnModo;
+    });
+  }
+
   bool isTestMode = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,23 +84,17 @@ class _QuickAccessModalState extends State<QuickAccessModal> {
               icon: Icons.science_outlined,
               title: 'Modo Prueba',
               description: 'Prueba patrones sin gastar intentos',
-              initialValue: isTestMode,
-              onChanged: (value) {
+              value: isTestMode,
+              onChanged: (value) async {
                 setState(() {
                   isTestMode = value;
                 });
-              },
-            ),
-            SizedBox(height: 15),
-            OptionButton(
-              icon: Icons.notifications_outlined,
-              title: 'Notificaciones',
-              description: 'Activa o silencia alertas de intentos fallidos',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  RouteTransitions.slideTransition(const NotificationsScreen()),
-                );
+
+                if (value) {
+                  await LockController().activarModoPruebaEnTodosLosLocks();
+                } else {
+                  await LockController().desactivarModoPruebaEnTodosLosLocks();
+                }
               },
             ),
           ],

@@ -8,7 +8,28 @@ class SecurityScreen extends StatefulWidget {
 }
 
 class _SecurityScreenState extends State<SecurityScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _cargarEstadoModoPrueba();
+  }
+
   bool isTestMode = false;
+
+  Future<void> _cargarEstadoModoPrueba() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final locks = await FirestoreService().getLocksByUser(user.uid);
+    if (locks.isEmpty) return;
+
+    // Verifica si al menos uno tiene modoPrueba activo
+    final algunoEnModo = locks.any((lock) => lock['modoPrueba'] == true);
+
+    setState(() {
+      isTestMode = algunoEnModo;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +70,15 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     children: [
                       TestModeButton(
                         isTestMode: isTestMode,
-                        onSwitchChanged: (value) {
+                        onSwitchChanged: (value) async {
                           setState(() {
                             isTestMode = value;
                           });
+                          if (value) {
+                            await LockController().activarModoPruebaEnTodosLosLocks();
+                          } else {
+                            await LockController().desactivarModoPruebaEnTodosLosLocks();
+                          }
                         },
                       ),
                       const TempBlockButton(),

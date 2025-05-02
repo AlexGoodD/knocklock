@@ -207,4 +207,34 @@ class FirestoreService {
       print('❌ Error al guardar el acceso: $e');
     }
   }
+
+  Future<void> registrarIntentoFallido(String lockId) async {
+    final docRef = FirebaseFirestore.instance.collection('locks').doc(lockId);
+    final doc = await docRef.get();
+
+    int intentos = doc.data()?['intentos'] ?? 3;
+    intentos = intentos - 1;
+
+    if (intentos <= 0) {
+      await docRef.update({
+        'intentos': 0,
+        'bloqueoActivoIntentos': true,
+        'bloqueoTimestamp': Timestamp.fromDate(DateTime.now().add(Duration(minutes: 5))),
+      });
+    } else {
+      await docRef.update({
+        'intentos': intentos,
+      });
+    }
+  }
+
+  Future<void> registrarAccesoCorrecto(String lockId) async {
+    final docRef = FirebaseFirestore.instance.collection('locks').doc(lockId);
+
+    await docRef.update({
+      'intentos': 3,
+      'bloqueoActivoIntentos': false,
+      'bloqueoTimestamp': null,
+    });
+  }
 }

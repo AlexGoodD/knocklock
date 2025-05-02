@@ -130,7 +130,7 @@ class _LockItemState extends State<LockItem> {
                     builder: (context, seguroActivo, _) {
                       return Switch(
                         value: seguroActivo,
-                        onChanged: (widget.lock.bloqueoActivo || !isConnected)
+                        onChanged: (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos || !isConnected)
                             ? null
                             : (nuevoEstado) => _toggleSeguro(nuevoEstado),
                         activeColor: AppColors.backgroundHelperColor,

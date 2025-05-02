@@ -36,7 +36,7 @@ class InputPasswordState extends State<InputPassword> {
     super.dispose();
   }
 
-  void _onChanged(String value) {
+  void onChanged(String value) {
     if (value.length > widget.length) return;
 
     setState(() {
@@ -64,7 +64,7 @@ class InputPasswordState extends State<InputPassword> {
 
   void clear() {
     _hiddenController.clear();
-    _onChanged('');
+    onChanged('');
     FocusScope.of(context).requestFocus(_hiddenFocusNode);
   }
 
@@ -72,12 +72,16 @@ class InputPasswordState extends State<InputPassword> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final boxWidth = screenWidth / (widget.length + 2);
+    final boxHeight = boxWidth * 1.2;
+
     return GestureDetector(
       onTap: _onTapBox,
       child: Column(
         children: [
           SizedBox(
-            height: 60,
+            height: boxHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(widget.length, (index) {
@@ -85,7 +89,7 @@ class InputPasswordState extends State<InputPassword> {
                     _hiddenController.text.length == index;
 
                 return Container(
-                  width: 50,
+                  width: boxWidth,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: _values[index].isNotEmpty
@@ -119,7 +123,7 @@ class InputPasswordState extends State<InputPassword> {
               focusNode: _hiddenFocusNode,
               keyboardType: TextInputType.number,
               maxLength: widget.length,
-              onChanged: _onChanged,
+              onChanged: onChanged,
               autofocus: true,
               enableInteractiveSelection: false,
               decoration: const InputDecoration(counterText: ''),

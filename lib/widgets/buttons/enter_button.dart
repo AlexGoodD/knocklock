@@ -3,11 +3,13 @@ import '../../core/imports.dart';
 class EnterButton extends StatelessWidget {
   final bool mostrar;
   final VoidCallback onTap;
+  final IconData? IconName;
 
   const EnterButton({
     super.key,
     required this.mostrar,
     required this.onTap,
+    this.IconName,
   });
 
   @override
@@ -27,7 +29,7 @@ class EnterButton extends StatelessWidget {
               color: AppColors.backgroundHelperColor,
             ),
             child: Icon(
-              Icons.dialpad,
+              IconName ?? Icons.dialpad,
               color: Colors.black,
               size: 30,
             ),

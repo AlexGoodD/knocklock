@@ -1,43 +1,50 @@
-import 'package:flutter/material.dart';
-import '../inputs/input_password.dart';
 import 'package:knocklock_flutter/core/imports.dart';
 
-class EnterPasswordModal extends StatefulWidget {
+class TokenModal extends StatefulWidget {
   final String lockId;
-  final String tipoPassword;
 
-  const EnterPasswordModal({
+  const TokenModal({
     super.key,
     required this.lockId,
-    required this.tipoPassword,
   });
 
   @override
-  State<EnterPasswordModal> createState() => _EnterPasswordModalState();
+  State<TokenModal> createState() => _TokenModalState();
 }
 
-class _EnterPasswordModalState extends State<EnterPasswordModal> {
+class _TokenModalState extends State<TokenModal> {
   final GlobalKey<InputPasswordState> _passwordKey = GlobalKey<InputPasswordState>();
 
   final lockController = LockController();
   final firestoreService = FirestoreService();
+  String? _generatedToken;
 
-  Future<void> _handleVerifyPassword() async {
-    final enteredPassword = _passwordKey.currentState?.password ?? '';
+  @override
+  void initState() {
+    super.initState();
+    _generateAndSetPassword();
+  }
 
-    final isValid = await lockController.verificarClave(widget.lockId, enteredPassword, widget.tipoPassword,);
 
-    if (isValid) {
-      await firestoreService.updateLockSecureState(widget.lockId, false);
-      await firestoreService.saveAccess(widget.lockId, 'Acceso correcto');
-      await lockController.restablecerIntentos(widget.lockId);
-      Navigator.pop(context);
-    } else {
-      await firestoreService.saveAccess(widget.lockId, 'Acceso fallido');
-      await lockController.registrarIntentoFallido(widget.lockId);
-      Navigator.pop(context);
+  Future<void> _generateAndSetPassword() async {
+    print('Entrando a la función _handleVerifyPassword');
 
-    }
+    // Generar una contraseña aleatoria de 8 caracteres
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random();
+    final generatedPassword = List.generate(5, (index) => characters[random.nextInt(characters.length)]).join();
+
+    // Precargar la contraseña generada en el InputPassword
+    setState(() {
+      _generatedToken = generatedPassword;
+    });
+
+    // Guardar la contraseña hasheada en Firestore en el documento 'Token'
+    await lockController.guardarToken(widget.lockId, generatedPassword, 'Token');
+  }
+
+  void closeModal() {
+    Navigator.of(context).pop();
   }
 
   @override
@@ -61,7 +68,7 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Ingresa tu contraseña',
+                      'Token',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -69,17 +76,21 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Si no recuerdas tu contraseña, no podrás cambiar el modo de tu dispositivo.',
+                      'Tu token se genera automáticamente y es único. Recuerda usarlo para ingresar.',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 30),
-                    InputPassword(
-                      key: _passwordKey,
-                      length: 5,
-                    ),
+                    if (_generatedToken != null)
+                      TokenDisplay(
+                        value: _generatedToken!,
+                        length: 5,
+                      )
+                    else
+                      const CircularProgressIndicator(),
+                    const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -90,9 +101,9 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: _handleVerifyPassword,
+                        onPressed: closeModal,
                         child: Text(
-                          'Ingresar',
+                          'Aceptar',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,

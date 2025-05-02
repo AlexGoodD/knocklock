@@ -31,58 +31,57 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
   }
 
   void _handleTap(bool seguroActivoActual) {
-    print('Estado actual: seguroActivo=$seguroActivoActual, isRecording=${isRecording.value}');
-
-
-
-    if (widget.lock.bloqueoActivo) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('El dispositivo se encuentra bloqueado por 1 hora.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+    if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+      mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
       return;
     }
 
     _animationHelper.triggerAnimation();
 
-    // Verificar si el modo activo es "CLAVE"
-    if(seguroActivoActual) {
-      if (widget.controller.modoSeleccionado.value == "CLAVE") {
+    final modo = widget.controller.modoSeleccionado.value;
+
+    // Si el dispositivo no está asegurado, lo bloqueamos primero
+    if (!seguroActivoActual) {
+      widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
+      setState(() => isRecording.value = false);
+      print('Bloqueando el dispositivo...');
+      return;
+    }
+
+    // Si ya está asegurado, actuamos según el modo
+    switch (modo) {
+      case "CLAVE":
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
           isScrollControlled: true,
-          builder: (context) => EnterPasswordModal(lockId: widget.lock.id),
+          builder: (context) => EnterPasswordModal(lockId: widget.lock.id, tipoPassword: 'Clave'),
         );
-        return;
-      }
-    } else {
-      widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
-    }
+        break;
 
+      case "TOKEN":
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) => EnterPasswordModal(lockId: widget.lock.id, tipoPassword: 'Token'),
+        );
+        break;
 
-    if (isRecording.value) {
-      widget.controller.detenerVerificacion();
-      setState(() {
-        isRecording.value = false;
-      });
-      print('Deteniendo grabación...');
-    } else {
-      if (seguroActivoActual) {
-        widget.controller.iniciarVerificacion(context, widget.lock);
-        setState(() {
-          isRecording.value = true;
-        });
-        print('Iniciando grabación...');
-      } else {
-        widget.controller.cambiarEstadoSeguro(widget.lock.id, true);
-        setState(() {
-          isRecording.value = false;
-        });
-        print('Bloqueando el dispositivo...');
-      }
+      case "PATRÓN":
+        if (isRecording.value) {
+          widget.controller.detenerVerificacion();
+          setState(() => isRecording.value = false);
+          print('Deteniendo grabación...');
+        } else {
+          widget.controller.iniciarVerificacion(context, widget.lock);
+          setState(() => isRecording.value = true);
+          print('Iniciando grabación...');
+        }
+        break;
+
+      default:
+        print('⚠️ Modo no soportado: $modo');
     }
   }
 

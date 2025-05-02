@@ -5,14 +5,16 @@ class Lock {
   final String name;
   final String ip;
   final bool seguroActivo;
-  final bool bloqueoActivo;
+  final bool bloqueoActivoManual;
+  final bool bloqueoActivoIntentos;
 
   Lock({
     required this.id,
     required this.name,
     required this.ip,
     required this.seguroActivo,
-    required this.bloqueoActivo,
+    required this.bloqueoActivoManual,
+    required this.bloqueoActivoIntentos,
   });
 
   factory Lock.fromFirestore(DocumentSnapshot doc) {
@@ -22,7 +24,8 @@ class Lock {
       name: data['name'] ?? '',
       ip: data['ip'] ?? '',
       seguroActivo: data['seguroActivo'] ?? false,
-      bloqueoActivo: data['bloqueoActivo'] ?? false,
+      bloqueoActivoManual: data['bloqueoActivoManual'] ?? false,
+      bloqueoActivoIntentos: data['bloqueoActivoIntentos'] ?? false,
     );
   }
 }

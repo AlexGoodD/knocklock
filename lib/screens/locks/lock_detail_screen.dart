@@ -81,7 +81,14 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
               child: IconButton(
                 icon: const Icon(Icons.settings),
                 onPressed: () {
-                  // Acción futura
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) => LockDetailModal(
+                      lock: widget.lock,
+                      controller: widget.controller,
+                    ),                  );
                 },
               ),
             ),
@@ -126,13 +133,8 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                 label: "PATRÓN",
                                 isSelected: modo == "PATRÓN",
                                 onTap: () {
-                                  if (widget.lock.bloqueoActivo) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('El dispositivo está bloqueado. No puedes cambiar el modo.'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
+                                  if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+                                    mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
                                     return;
                                   }
                                   widget.controller.seleccionarModo("PATRÓN");
@@ -144,13 +146,8 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                 label: "CLAVE",
                                 isSelected: modo == "CLAVE",
                                 onTap: () {
-                                  if (widget.lock.bloqueoActivo) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('El dispositivo está bloqueado. No puedes cambiar el modo.'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
+                                  if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+                                    mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
                                     return;
                                   }
                                   widget.controller.seleccionarModo("CLAVE");
@@ -162,13 +159,8 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                 label: "TOKEN",
                                 isSelected: modo == "TOKEN",
                                 onTap: () {
-                                  if (widget.lock.bloqueoActivo) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('El dispositivo está bloqueado. No puedes cambiar el modo.'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
+                                  if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+                                    mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
                                     return;
                                   }
                                   widget.controller.seleccionarModo("TOKEN");
@@ -182,16 +174,16 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                     },
                   ),
                   const SizedBox(height: 100),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ValueListenableBuilder<String>(
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.topCenter,
+                    child: ValueListenableBuilder<String>(
                         valueListenable: widget.controller.modoSeleccionado,
                         builder: (context, modo, child) {
                           return ValueListenableBuilder<bool>(
                             valueListenable: widget.controller.mostrarBotonGrabacion,
                             builder: (context, mostrar, _) {
-
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -214,13 +206,25 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                                         );
                                       },
                                     ),
+                                  if (modo == "TOKEN")
+                                    EnterButton(
+                                      IconName: Icons.shuffle,
+                                      mostrar: mostrar,
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) => TokenModal(lockId: widget.lock.id),
+                                        );
+                                      },
+                                    ),
                                 ],
                               );
                             },
                           );
                         },
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 70),
                 ],

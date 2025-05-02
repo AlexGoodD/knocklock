@@ -46,17 +46,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           );
                         },
                       ),
-                      OptionButton(
-                        icon: Icons.notifications_outlined,
-                        title: 'Notificaciones',
-                        description: 'Administra alertas importantes',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            RouteTransitions.slideTransition(const NotificationsScreen()),
-                          );
-                        },
-                      ),
                       SwitchOptionButton(
                         icon: Icons.mode_night_outlined,
                         title: 'Apariencia',
@@ -73,7 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: 'Exportar historial',
                         description: 'Exporta tu historial de accesos',
                         onPressed: () {
-                          print('Exportar');
+                          LockController().exportarLogsDelUsuarioAExcel();
                         },
                       ),
                       OptionButton(

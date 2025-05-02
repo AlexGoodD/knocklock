@@ -8,7 +8,7 @@ class MainNavigator extends StatefulWidget {
 }
 
 class _MainNavigatorState extends State<MainNavigator> {
-  int _selectedIndex = 3;
+  int _selectedIndex = 0;
   bool _showBottomBar = true;
 
   final LockController _lockController = LockController();

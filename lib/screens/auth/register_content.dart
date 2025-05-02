@@ -21,26 +21,19 @@ class RegisterContent extends StatelessWidget {
       final lastName = lastNameController.text.trim();
 
       if (password != confirmPassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden')),
-        );
+        mostrarAlertaGlobal('error', 'Las contraseñas no coinciden.');
         return;
       }
 
       final user = await authService.registerUser(email, password, firstName, lastName);
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registro correcto')),
-        );
-
+        mostrarAlertaGlobal('exito', 'Registro correcto.');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const AuthScreen()),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al registrar usuario')),
-        );
+        mostrarAlertaGlobal('error', 'Registro fallido.');
       }
     }
 

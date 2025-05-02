@@ -4,7 +4,8 @@ class SwitchOptionButton extends StatefulWidget {
   final IconData icon;
   final String title;
   final String? description;
-  final bool initialValue;
+  final bool? value;           // Valor externo (modo controlado)
+  final bool? initialValue;    // Valor inicial si no se controla externamente
   final ValueChanged<bool> onChanged;
 
   const SwitchOptionButton({
@@ -12,7 +13,8 @@ class SwitchOptionButton extends StatefulWidget {
     required this.icon,
     required this.title,
     this.description,
-    required this.initialValue,
+    this.value,
+    this.initialValue,
     required this.onChanged,
   }) : super(key: key);
 
@@ -21,16 +23,20 @@ class SwitchOptionButton extends StatefulWidget {
 }
 
 class _SwitchOptionButtonState extends State<SwitchOptionButton> {
-  late bool isSwitched;
+  late bool internalValue;
+
+  bool get isControlled => widget.value != null;
 
   @override
   void initState() {
     super.initState();
-    isSwitched = widget.initialValue;
+    internalValue = widget.initialValue ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final switchValue = isControlled ? widget.value! : internalValue;
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -63,26 +69,22 @@ class _SwitchOptionButtonState extends State<SwitchOptionButton> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.title,
-                  style: AppTextStyles.primaryModalStyle,
-                ),
-                Text(
-                  widget.description ?? '',
-                  style: AppTextStyles.secondaryModalStyle,
-                ),
+                Text(widget.title, style: AppTextStyles.primaryModalStyle),
+                Text(widget.description ?? '', style: AppTextStyles.secondaryModalStyle),
               ],
             ),
           ),
           Transform.scale(
             scale: 0.75,
             child: Switch(
-              value: isSwitched,
-              onChanged: (value) {
-                setState(() {
-                  isSwitched = value;
-                });
-                widget.onChanged(value);
+              value: switchValue,
+              onChanged: (val) {
+                if (!isControlled) {
+                  setState(() {
+                    internalValue = val;
+                  });
+                }
+                widget.onChanged(val);
               },
               activeColor: AppColors.backgroundHelperColor,
               activeTrackColor: AppColors.primaryColor,

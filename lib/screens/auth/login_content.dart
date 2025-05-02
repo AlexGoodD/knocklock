@@ -20,9 +20,7 @@ class LoginContent extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const MainNavigator()),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al iniciar sesión')),
-        );
+        mostrarAlertaGlobal('error', 'Inicio de sesión fallido.');
       }
     }
 

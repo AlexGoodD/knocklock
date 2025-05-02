@@ -4,6 +4,11 @@ export 'package:flutter/services.dart';
 export 'dart:async';
 export 'dart:convert';
 export 'package:crypto/crypto.dart';
+export 'dart:math';
+export 'package:rxdart/rxdart.dart';
+export 'package:vibration/vibration.dart';
+export 'package:permission_handler/permission_handler.dart';
+export 'package:path_provider/path_provider.dart';
 
 //Firebase
 export 'package:cloud_firestore/cloud_firestore.dart';
@@ -52,6 +57,8 @@ export 'package:knocklock_flutter/widgets/modals/select_avatar_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/perfil_info_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/new_password_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/enter_password_modal.dart';
+export 'package:knocklock_flutter/widgets/modals/generate_token_modal.dart';
+export 'package:knocklock_flutter/widgets/modals/lock_detail_modal.dart';
 
 export 'package:knocklock_flutter/widgets/bottom_bar.dart';
 
@@ -66,6 +73,8 @@ export 'package:knocklock_flutter/widgets/items/section_about_item.dart';
 export 'package:knocklock_flutter/widgets/items/avatar_icon.dart';
 export 'package:knocklock_flutter/widgets/items/global_status_card.dart';
 export 'package:knocklock_flutter/widgets/items/new_password_content.dart';
+export 'package:knocklock_flutter/widgets/items/top_section_home.dart';
+export 'package:knocklock_flutter/widgets/items/token_display.dart';
 
 export 'package:knocklock_flutter/widgets/buttons/button_add_lock.dart';
 export 'package:knocklock_flutter/widgets/buttons/mode_button.dart';
@@ -95,8 +104,10 @@ export 'package:knocklock_flutter/utils/animations/route_transition.dart';
 
 export 'package:knocklock_flutter/utils/helpers/time_utils.dart';
 export 'package:knocklock_flutter/utils/helpers/calcular_tiempo_bloqueo.dart';
+export 'package:knocklock_flutter/utils/helpers/alerts_helper.dart';
+export 'package:knocklock_flutter/utils/helpers/normalizar_modo.dart';
+export 'package:knocklock_flutter/utils/helpers/mostrar_dialogo_texto.dart';
 
-export 'package:rxdart/rxdart.dart';
-export 'package:vibration/vibration.dart';
+export 'package:knocklock_flutter/utils/decorations/alert_action.dart';
 
 export 'package:knocklock_flutter/utils/logs/status_log.dart';

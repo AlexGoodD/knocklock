@@ -17,10 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final firestoreService = FirestoreService();
   bool isExpanded = false;
   bool showTopSection = true;
-  bool displayTopSection = true;
+  bool _isTopSectionVisible = true;
   final lockController = LockController();
   String firstName = '';
   StreamSubscription<Map<String, dynamic>?>? _userDataSubscription;
+  List<Lock> currentLocks = [];
 
 
   @override
@@ -30,17 +31,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _subscribeToUserFirstName() {
-    _userDataSubscription = firestoreService.getCurrentUserData().listen((userData) {
-      if (userData != null && mounted) {
-        setState(() {
-          final fullName = userData['firstName'] ?? '';
-          final rawFirstName = fullName.split(' ').first;
-          firstName = rawFirstName.length > 7
-              ? '${rawFirstName.substring(0, 7)}...'
-              : rawFirstName;
+    _userDataSubscription =
+        firestoreService.getCurrentUserData().listen((userData) {
+          if (userData != null && mounted) {
+            setState(() {
+              final fullName = userData['firstName'] ?? '';
+              final rawFirstName = fullName
+                  .split(' ')
+                  .first;
+              firstName = rawFirstName.length > 7
+                  ? '${rawFirstName.substring(0, 7)}...'
+                  : rawFirstName;
+            });
+          }
         });
-      }
-    });
   }
 
   void addLock() async {
@@ -70,30 +74,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
   void toggleAllItemsView() async {
     if (!isExpanded) {
+      // 1. Fade-out del TopSection
       setState(() {
-        showTopSection = false;
+        _isTopSectionVisible = false;
       });
 
+      // 2. Espera a que termine el fade-out
       await Future.delayed(const Duration(milliseconds: 300));
 
+      // 3. Elimina del layout
       setState(() {
-        displayTopSection = false;
+        showTopSection = false;
         isExpanded = true;
       });
 
-      widget.onExpandChange?.call(true); // <- Notifica a MainNavigator
+      widget.onExpandChange?.call(true);
+
     } else {
-      setState(() {
-        displayTopSection = true;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 16));
-
+      // 1. Agrega al layout pero invisible
       setState(() {
         showTopSection = true;
+        _isTopSectionVisible = false;
+      });
+
+      // 2. Espera a que se reestructure con su tamaño original
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      // 3. Disminuye grid (AnimatedSize se encarga)
+      setState(() {
         isExpanded = false;
+      });
+
+      // 4. Luego de la transición, fade-in
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      setState(() {
+        _isTopSectionVisible = true;
       });
 
       widget.onExpandChange?.call(false);
@@ -120,27 +139,22 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Material(
-                  color: Colors.transparent,
-                  child: InkResponse(
-                    onTap: () {
-                      if (!isExpanded) {
-                        showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          builder: (context) => const QuickAccessModal(),
-                        );
-                      } else {
-                        toggleAllItemsView();
-                      }
-                    },
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    radius: 24,
-                    child: Icon(
-                      isExpanded ? Icons.arrow_back : Icons.apps,
-                      color: AppColors.primaryColor,
+                Opacity(
+                  opacity: isExpanded ? 1.0 : 0.0,
+                  child: IgnorePointer(
+                    ignoring: !isExpanded,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkResponse(
+                        onTap: toggleAllItemsView,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        radius: 24,
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -168,90 +182,60 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          !isExpanded ? const SizedBox(height: 30) : const SizedBox.shrink(),
+          const SizedBox(height: 40),
 
           // Botón de agregar
           AnimatedSize(
-            duration: const Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            child: displayTopSection
-                ? Column(
-              children: [
-                AnimatedOpacity(
-                  opacity: showTopSection ? 1 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text('Hola ', style: AppTextStyles.primaryTextStyle),
-                                Text('$firstName', style: AppTextStyles.primaryTextStyle),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Text('Bienvenido de vuelta', style: TextStyle(color: AppColors.primaryColor, fontSize: 14)),
-                          ],
-                        ),
-                        ButtonAddLock( onPressed: showAddLockDialog),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                AnimatedOpacity(
-                  opacity: showTopSection ? 1 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: LatestLogCard(
-                      lockController: lockController,
-                      onPressed: () {
-                        widget.onNavigateTo?.call(1);
-                      },
-                    ),
-                  ),
-                ),
-              ],
+            child: showTopSection
+                ? AnimatedOpacity(
+              opacity: _isTopSectionVisible ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
+              child: TopSectionHome(
+                firstName: firstName,
+                onAddLock: showAddLockDialog,
+                onNavigateTo: widget.onNavigateTo,
+              ),
             )
                 : const SizedBox.shrink(),
           ),
 
 
-          !isExpanded ? const SizedBox(height: 30) : const SizedBox.shrink(),
-
           // Grid
           Expanded(
-            child: StreamBuilder<List<Lock>>(
-              stream: lockController.obtenerLocks(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: StreamBuilder<List<Lock>>(
+                stream: lockController.obtenerLocks(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      currentLocks.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text("No hay candados registrados"));
-                }
+                  if (snapshot.hasData && snapshot.data != null) {
+                    currentLocks = snapshot.data!;
+                    lockController.inicializarEstadoDispositivos(currentLocks);
+                    lockController.iniciarVerificacionPeriodica(currentLocks);
+                  }
 
-                final locks = snapshot.data!;
+                  if (currentLocks.isEmpty) {
+                    return const Center(
+                        child: Text("No hay candados registrados"));
+                  }
 
-                lockController.inicializarEstadoDispositivos(locks);
-                lockController.iniciarVerificacionPeriodica(locks);
-
-                return LockGridScreen(
-                  locks: locks,
-                  isExpanded: isExpanded,
-                  onToggle: toggleAllItemsView,
-                  lockController: lockController,
-                );
-              },
+                  return LockGridScreen(
+                    locks: currentLocks,
+                    isExpanded: isExpanded,
+                    onToggle: toggleAllItemsView,
+                    lockController: lockController,
+                  );
+                },
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
