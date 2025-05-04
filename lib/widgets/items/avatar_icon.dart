@@ -21,7 +21,7 @@ class CircularProfileButton extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
-          border: Border.all(color: AppColors.helperColor, width: 2), // Borde gris
+          border: Border.all(color: AppColors.of(context).helperColor, width: 2), // Borde gris
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),

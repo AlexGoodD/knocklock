@@ -23,21 +23,22 @@ class AddNewLockModal extends StatelessWidget {
               top: 20.0,
               bottom: MediaQuery.of(context).viewInsets.bottom + 20.0,
             ),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: AppColors.of(context).backgroundHelperColor,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: SafeArea(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Crear Nuevo Lock',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: AppColors.of(context).primaryColor,
                       ),
                     ),
                   ),
@@ -63,14 +64,14 @@ class AddNewLockModal extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: onAdd,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
+                        backgroundColor: AppColors.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Agregar',
-                        style: AppTextStyles.authButtonTextStyle,
+                        style: AppTextStyles(context).authButtonTextStyle,
                       ),
                     ),
                   ),

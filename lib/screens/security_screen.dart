@@ -38,19 +38,19 @@ class _SecurityScreenState extends State<SecurityScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.fromLTRB(30.0, 100.0, 30.0, 0.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Control de Seguridad',
-                  style: AppTextStyles.sectionPrimaryStyle,
+                  style: AppTextStyles(context).sectionPrimaryStyle,
                 ),
                 SizedBox(height: 10),
                 Text(
                   'Gestiona el estado de todos tus dispositivos',
-                  style: AppTextStyles.sectionSecondaryStyle,
+                  style: AppTextStyles(context).sectionSecondaryStyle,
                 ),
               ],
             ),

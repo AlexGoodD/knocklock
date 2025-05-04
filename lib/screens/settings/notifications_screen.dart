@@ -13,13 +13,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.backgroundTop,
-            AppColors.backgroundBottom,
+            AppColors.of(context).backgroundTop,
+            AppColors.of(context).backgroundBottom,
           ],
         ),
       ),
@@ -43,14 +43,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Notificaciones',
-                    style: AppTextStyles.sectionPrimaryStyle,
+                    style: AppTextStyles(context).sectionPrimaryStyle,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     'Administra tus alertas importantes en la app',
-                    style: AppTextStyles.sectionSecondaryStyle,
+                    style: AppTextStyles(context).sectionSecondaryStyle,
                   ),
                   const SizedBox(height: 30),
                 ],

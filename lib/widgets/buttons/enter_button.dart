@@ -26,7 +26,7 @@ class EnterButton extends StatelessWidget {
             height: 70.0,
             width: 70.0,
             decoration: circularBoxDecoration(
-              color: AppColors.backgroundHelperColor,
+              color: AppColors.of(context).backgroundHelperColor,
             ),
             child: Icon(
               IconName ?? Icons.dialpad,

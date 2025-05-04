@@ -30,11 +30,11 @@ class OptionButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.of(context).backgroundHelperColor,
           padding: const EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(color: AppColors.HelperBorderColor),
+            side: BorderSide(color: AppColors.of(context).helperBorderColor),
           ),
         ).copyWith(
           overlayColor: MaterialStateProperty.all(Colors.transparent),
@@ -48,11 +48,11 @@ class OptionButton extends StatelessWidget {
               width: 35,
               height: 45,
               decoration: BoxDecoration(
-                color: AppColors.helperColor,
+                color: AppColors.of(context).helperColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.primaryColor, width: 1),
+                border: Border.all(color: AppColors.of(context).primaryColor, width: 1),
               ),
-              child: Icon(icon, color: AppColors.primaryColor),
+              child: Icon(icon, color: AppColors.of(context).primaryColor),
             ),
             const SizedBox(width: 20),
             Column(
@@ -60,11 +60,11 @@ class OptionButton extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.primaryModalStyle,
+                  style: AppTextStyles(context).primaryModalStyle,
                 ),
                 Text(
                   description,
-                  style: AppTextStyles.secondaryModalStyle,
+                  style: AppTextStyles(context).secondaryModalStyle,
                 ),
               ],
             ),

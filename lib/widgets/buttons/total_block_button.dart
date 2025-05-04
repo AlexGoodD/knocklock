@@ -62,13 +62,13 @@ class _TotalBlockButtonState extends State<TotalBlockButton> with TickerProvider
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.errorBackgroundColor,
-                  border: Border.all(color: AppColors.errorTextColor, width: 1),
+                  color: AppColors.of(context).errorBackgroundColor,
+                  border: Border.all(color: AppColors.of(context).errorTextColor, width: 1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: AppColors.errorTextColor, size: 40),
+                    Icon(Icons.error_outline, color: AppColors.of(context).errorTextColor, size: 40),
                     const SizedBox(width: 15),
                     Expanded(
                       child: Column(
@@ -78,8 +78,8 @@ class _TotalBlockButtonState extends State<TotalBlockButton> with TickerProvider
                             bloqueoActivado
                                 ? 'Bloqueo Total Activado'
                                 : 'Activar Bloqueo Total',
-                            style: const TextStyle(
-                              color: AppColors.errorTextColor,
+                            style: TextStyle(
+                              color: AppColors.of(context).errorTextColor,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -89,8 +89,8 @@ class _TotalBlockButtonState extends State<TotalBlockButton> with TickerProvider
                             bloqueoActivado
                                 ? 'Espere $minutosRestantes minutos para el desbloqueo'
                                 : 'Inhabilita desbloqueos durante 1 hora',
-                            style: const TextStyle(
-                              color: AppColors.errorTextColor,
+                            style: TextStyle(
+                              color: AppColors.of(context).errorTextColor,
                             ),
                             textAlign: TextAlign.left,
                           ),

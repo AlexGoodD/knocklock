@@ -32,7 +32,7 @@ class _TempBlockButtonState extends State<TempBlockButton> {
           margin: const EdgeInsets.symmetric(horizontal: 5),
           padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.of(context).backgroundHelperColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(

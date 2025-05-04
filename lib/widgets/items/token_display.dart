@@ -31,19 +31,19 @@ class TokenDisplay extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: char.isNotEmpty
-                  ? AppColors.helperInputColor
-                  : AppColors.helperInputColor,
+                  ? AppColors.of(context).helperInputColor
+                  : AppColors.of(context).helperInputColor,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: AppColors.helperInputColor,
+                color: AppColors.of(context).helperInputColor,
                 width: 1.5,
               ),
             ),
             child: Text(
               char,
               style: textStyle ??
-                  const TextStyle(
-                    color: AppColors.primaryColor,
+                  TextStyle(
+                    color: AppColors.of(context).primaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

@@ -40,7 +40,7 @@ class SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(top: 25.0, bottom: 8.0),
       child: Text(
         title,
-        style: AppTextStyles.sectionAboutTitleTextStyle,
+        style: AppTextStyles(context).sectionAboutTitleTextStyle,
       ),
     );
   }
@@ -55,7 +55,7 @@ class SectionContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       content,
-      style: AppTextStyles.sectionAboutContentTextStyle,
+      style: AppTextStyles(context).sectionAboutContentTextStyle,
     );
   }
 }
@@ -80,7 +80,7 @@ class SectionListContent extends StatelessWidget {
               Expanded(
                 child: Text(
                   item,
-                  style: AppTextStyles.sectionAboutContentTextStyle,
+                  style: AppTextStyles(context).sectionAboutContentTextStyle,
                 ),
               ),
             ],

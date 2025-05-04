@@ -150,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         radius: 24,
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back,
-                          color: AppColors.primaryColor,
+                          color: AppColors.of(context).primaryColor,
                         ),
                       ),
                     ),
@@ -172,9 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     radius: 24,
-                    child: const Icon(
+                    child: Icon(
                       Icons.account_circle_outlined,
-                      color: AppColors.primaryColor,
+                      color: AppColors.of(context).primaryColor,
                     ),
                   ),
                 ),

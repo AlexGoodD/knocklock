@@ -11,13 +11,13 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.backgroundTop,
-            AppColors.backgroundBottom,
+            AppColors.of(context).backgroundTop,
+            AppColors.of(context).backgroundBottom,
           ],
         ),
       ),
@@ -28,22 +28,22 @@ class _AboutScreenState extends State<AboutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _CustomAppBar(),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
                       'Acerca de Nosotros',
-                      style: AppTextStyles.sectionPrimaryStyle,
+                      style: AppTextStyles(context).sectionPrimaryStyle,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       'Consulta la información general de la aplicación, versión actual, políticas y medios de contacto.',
-                      style: AppTextStyles.sectionSecondaryStyle,
+                      style: AppTextStyles(context).sectionSecondaryStyle,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

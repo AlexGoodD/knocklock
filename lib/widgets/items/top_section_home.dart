@@ -28,16 +28,16 @@ class TopSectionHome extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('Hola ', style: AppTextStyles.primaryTextStyle),
+                          Text('Hola ', style: AppTextStyles(context).primaryTextStyle),
                           Text('$firstName',
-                              style: AppTextStyles.primaryTextStyle),
+                              style: AppTextStyles(context).primaryTextStyle),
                         ],
                       ),
                       const SizedBox(height: 5),
                       Text(
                         'Bienvenido de vuelta',
                         style: TextStyle(
-                            color: AppColors.primaryColor, fontSize: 14),
+                            color: AppColors.of(context).primaryColor, fontSize: 14),
                       ),
                     ],
                   ),

@@ -22,10 +22,10 @@ class LatestLogCard extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
               'No hay accesos recientes.',
-              style: TextStyle(color: AppColors.primaryColor),
+              style: TextStyle(color: AppColors.of(context).primaryColor),
             ),
           );
         }
@@ -41,15 +41,15 @@ class LatestLogCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            color: AppColors.backgroundHelperColor,
+            color: AppColors.of(context).backgroundHelperColor,
             elevation: 2,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
-                    color: AppColors.primaryColor,
+                    color: AppColors.of(context).primaryColor,
                   ),
                   const SizedBox(width: 15),
                   Expanded(
@@ -58,8 +58,8 @@ class LatestLogCard extends StatelessWidget {
                       children: [
                         Text(
                           'Último acceso: ${DateFormat('h:mm a').format(log.timestamp)}',
-                          style: const TextStyle(
-                            color: AppColors.primaryColor,
+                          style: TextStyle(
+                            color: AppColors.of(context).primaryColor,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -67,17 +67,17 @@ class LatestLogCard extends StatelessWidget {
                         const SizedBox(height: 5),
                         Text(
                           'Desde: ${lock.name} (${lock.ip})',
-                          style: const TextStyle(
-                            color: AppColors.primaryColor,
+                          style: TextStyle(
+                            color: AppColors.of(context).primaryColor,
                             fontSize: 14,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios,
-                    color: AppColors.primaryColor,
+                    color: AppColors.of(context).primaryColor,
                     size: 18,
                   ),
                 ],

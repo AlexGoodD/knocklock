@@ -47,9 +47,9 @@ class _SwitchOptionButtonState extends State<SwitchOptionButton> {
             offset: const Offset(0, 0),
           ),
         ],
-        color: Colors.white,
+        color: AppColors.of(context).backgroundHelperColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.HelperBorderColor),
+        border: Border.all(color: AppColors.of(context).helperBorderColor),
       ),
       child: Row(
         children: [
@@ -58,19 +58,19 @@ class _SwitchOptionButtonState extends State<SwitchOptionButton> {
             width: 35,
             height: 45,
             decoration: BoxDecoration(
-              color: AppColors.helperColor,
+              color: AppColors.of(context).helperColor,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black, width: 1),
             ),
-            child: Icon(widget.icon, color: AppColors.primaryColor),
+            child: Icon(widget.icon, color: AppColors.of(context).primaryColor),
           ),
           const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.title, style: AppTextStyles.primaryModalStyle),
-                Text(widget.description ?? '', style: AppTextStyles.secondaryModalStyle),
+                Text(widget.title, style: AppTextStyles(context).primaryModalStyle),
+                Text(widget.description ?? '', style: AppTextStyles(context).secondaryModalStyle),
               ],
             ),
           ),
@@ -86,10 +86,10 @@ class _SwitchOptionButtonState extends State<SwitchOptionButton> {
                 }
                 widget.onChanged(val);
               },
-              activeColor: AppColors.backgroundHelperColor,
-              activeTrackColor: AppColors.primaryColor,
-              inactiveThumbColor: AppColors.backgroundHelperColor,
-              inactiveTrackColor: AppColors.secondaryColor,
+              activeColor: AppColors.of(context).backgroundHelperColor,
+              activeTrackColor: AppColors.of(context).primaryColor,
+              inactiveThumbColor: AppColors.of(context).backgroundHelperColor,
+              inactiveTrackColor: AppColors.of(context).secondaryColor,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),

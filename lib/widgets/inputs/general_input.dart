@@ -29,7 +29,7 @@ class GeneralInput extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               headerLabel!,
-              style: AppTextStyles.headerLabelTextStyle,
+              style: AppTextStyles(context).headerLabelTextStyle,
             ),
           ),
         SizedBox(
@@ -37,11 +37,11 @@ class GeneralInput extends StatelessWidget {
           height: 65,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.of(context).backgroundHelperColor,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppColors.of(context).primaryColor.withOpacity(0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 0),
                 ),
@@ -53,8 +53,8 @@ class GeneralInput extends StatelessWidget {
               enabled: enabled,
               decoration: InputDecoration(
                 labelText: label,
-                labelStyle: const TextStyle(color: Colors.black),
-                floatingLabelStyle: const TextStyle(color: Colors.black),
+                labelStyle: TextStyle(color: AppColors.of(context).primaryColor,),
+                floatingLabelStyle: TextStyle(color: AppColors.of(context).primaryColor,),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               ),

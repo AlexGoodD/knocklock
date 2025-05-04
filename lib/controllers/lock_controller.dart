@@ -808,7 +808,10 @@ class LockController {
       if (bytes != null) {
         final file = File(filePath);
         await file.writeAsBytes(bytes, flush: true);
-        mostrarAlertaGlobal('exito', 'Archivo guardado en:\n$filePath');
+
+
+        // Compartir el archivo
+        await Share.shareXFiles([XFile(filePath)], text: 'Aquí están tus registros de acceso');
       } else {
         mostrarAlertaGlobal('error', 'No se pudo generar el archivo.');
       }

@@ -34,13 +34,13 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.backgroundTop,
-            AppColors.backgroundBottom,
+            AppColors.of(context).backgroundTop,
+            AppColors.of(context).backgroundBottom,
           ],
         ),
       ),
@@ -66,12 +66,12 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
               const SizedBox(height: 10),
               Text(
                 widget.lock.name,
-                style: AppTextStyles.primaryTextStyle,
+                style: AppTextStyles(context).primaryTextStyle,
               ),
               const SizedBox(height: 5),
               Text(
                 widget.lock.ip,
-                style: AppTextStyles.secondaryTextStyle,
+                style: AppTextStyles(context).secondaryTextStyle,
               ),
             ],
           ),
@@ -118,11 +118,11 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                         children: [
                           Text(
                             "Modo activo",
-                            style: AppTextStyles.secondaryModalStyle,
+                            style: AppTextStyles(context).secondaryModalStyle,
                           ),
                           Text(
                             modo,
-                            style: AppTextStyles.primaryTextStyle,
+                            style: AppTextStyles(context).primaryTextStyle,
                           ),
                           const SizedBox(height: 45),
                           Row(

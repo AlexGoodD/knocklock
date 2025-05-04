@@ -28,8 +28,8 @@ class ModeButton extends StatelessWidget {
         height: screenHeight * 0.13,
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryColor
-              : AppColors.secondaryBackgroundHelperColor,
+              ? AppColors.of(context).primaryColor
+              : AppColors.of(context).secondaryBackgroundHelperColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -48,7 +48,7 @@ class ModeButton extends StatelessWidget {
               width: screenWidth * 0.12,
               height: screenWidth * 0.12,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryColor : Colors.white,
+                color: isSelected ? AppColors.of(context).primaryColor : Colors.white,
                 border: isSelected
                     ? Border.all(color: Colors.white, width: 2.0)
                     : null,
@@ -64,14 +64,14 @@ class ModeButton extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.white : AppColors.primaryColor, size: screenWidth * 0.05,
+                color: isSelected ? Colors.white : AppColors.of(context).primaryColor, size: screenWidth * 0.05,
               ),
             ),
             const SizedBox(height: 10),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 300),
-              style: AppTextStyles.HelperPrimaryStyle.copyWith(
-                color: isSelected ? Colors.white : AppColors.primaryColor,
+              style: AppTextStyles(context).helperPrimaryStyle.copyWith(
+                color: isSelected ? Colors.white : AppColors.of(context).primaryColor,
               ),
               child: Text(label),
             ),

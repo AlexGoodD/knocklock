@@ -40,19 +40,19 @@ Future<String?> mostrarDialogoTexto(
         ElevatedButton(
           onPressed: () => Navigator.pop(ctx, controller.text.trim()),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryColor,
+            backgroundColor: AppColors.of(context).primaryColor,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Guardar',
-                style: TextStyle(color: AppColors.backgroundHelperColor),
+                style: TextStyle(color: AppColors.of(context).backgroundHelperColor),
               ),
             ],
           ),
@@ -91,16 +91,16 @@ Future<bool> mostrarDialogoConfirmacion(BuildContext context, String mensaje) as
         ElevatedButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryColor,
+            backgroundColor: AppColors.of(context).primaryColor,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: const Text(
+          child: Text(
             'Eliminar',
-            style: TextStyle(color: AppColors.backgroundHelperColor),
+            style: TextStyle(color: AppColors.of(context).backgroundHelperColor),
           ),
         ),
       ],

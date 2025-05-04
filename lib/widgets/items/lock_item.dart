@@ -53,7 +53,7 @@ class _LockItemState extends State<LockItem> {
               padding:
               const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
               decoration: BoxDecoration(
-                color: AppColors.backgroundHelperColor,
+                color: AppColors.of(context).backgroundHelperColor,
                 borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
@@ -75,7 +75,7 @@ class _LockItemState extends State<LockItem> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
+                          color: AppColors.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: ValueListenableBuilder<bool>(
@@ -94,7 +94,7 @@ class _LockItemState extends State<LockItem> {
                                     ? Icons.lock_outlined
                                     : Icons.lock_open,
                                 key: ValueKey(seguroActivo),
-                                color: AppColors.backgroundHelperColor,
+                                color: AppColors.of(context).backgroundHelperColor,
                                 size: 20,
                               ),
                             );
@@ -107,8 +107,8 @@ class _LockItemState extends State<LockItem> {
                         height: 8,
                         decoration: BoxDecoration(
                           color: isConnected
-                              ? AppColors.trueConnectionColor
-                              : AppColors.falseConnectionColor,
+                              ? AppColors.of(context).trueConnectionColor
+                              : AppColors.of(context).falseConnectionColor,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -117,12 +117,12 @@ class _LockItemState extends State<LockItem> {
                   const SizedBox(height: 8),
                   Text(
                     widget.ip,
-                    style: AppTextStyles.lockItemDescriptionStyle,
+                    style: AppTextStyles(context).lockItemDescriptionStyle,
                     textAlign: TextAlign.left,
                   ),
                   Text(
                     widget.name,
-                    style: AppTextStyles.lockItemTitleStyle,
+                    style: AppTextStyles(context).lockItemTitleStyle,
                     textAlign: TextAlign.left,
                   ),
                   ValueListenableBuilder<bool>(
@@ -133,10 +133,10 @@ class _LockItemState extends State<LockItem> {
                         onChanged: (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos || !isConnected)
                             ? null
                             : (nuevoEstado) => _toggleSeguro(nuevoEstado),
-                        activeColor: AppColors.backgroundHelperColor,
-                        activeTrackColor: AppColors.primaryColor,
-                        inactiveThumbColor: AppColors.backgroundHelperColor,
-                        inactiveTrackColor: AppColors.secondaryColor,
+                        activeColor: AppColors.of(context).backgroundHelperColor,
+                        activeTrackColor: AppColors.of(context).primaryColor,
+                        inactiveThumbColor: AppColors.of(context).backgroundHelperColor,
+                        inactiveTrackColor: AppColors.of(context).secondaryColor,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       );
                     },

@@ -112,8 +112,8 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
               width: 220.0,
               decoration: circularBoxDecoration(
                 color: isRecording.value
-                    ? AppColors.primaryColor
-                    : AppColors.backgroundHelperColor,
+                    ? AppColors.of(context).primaryColor
+                    : AppColors.of(context).backgroundHelperColor,
               ),
               child: ValueListenableBuilder<bool>(
                 valueListenable: isRecording,
@@ -133,10 +133,10 @@ class _ActionLockButtonState extends State<ActionLockButton> with SingleTickerPr
                       const SizedBox(height: 12),
                       Text(
                         recording ? "Grabando..." : "Estado del\nDispositivo",
-                        style: AppTextStyles.secondaryTextStyle.copyWith(
+                        style: AppTextStyles(context).secondaryTextStyle.copyWith(
                           color: recording
                               ? Colors.white
-                              : AppColors.primaryColor,
+                              : AppColors.of(context).primaryColor,
                         ),
                         textAlign: TextAlign.center,
                       ),

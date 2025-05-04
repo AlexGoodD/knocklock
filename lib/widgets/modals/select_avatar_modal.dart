@@ -34,8 +34,8 @@ class _SelectAvatarModalState extends State<SelectAvatarModal> {
         right: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppColors.of(context).backgroundHelperColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -71,7 +71,7 @@ class _SelectAvatarModalState extends State<SelectAvatarModal> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? AppColors.primaryColor : AppColors.helperColor,
+                        color: isSelected ? AppColors.of(context).primaryColor : AppColors.of(context).helperColor,
                         width: 3,
                       ),
                     ),
@@ -90,7 +90,7 @@ class _SelectAvatarModalState extends State<SelectAvatarModal> {
             const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
+                backgroundColor: AppColors.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -98,7 +98,7 @@ class _SelectAvatarModalState extends State<SelectAvatarModal> {
         onPressed: () {
                 Navigator.pop(context, _selectedAvatar);
               },
-              child: Text('Seleccionar avatar', style: AppTextStyles.authButtonTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 15),),
+              child: Text('Seleccionar avatar', style: AppTextStyles(context).authButtonTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 15),),
             )
           ],
         ),

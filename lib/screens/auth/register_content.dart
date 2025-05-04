@@ -40,7 +40,7 @@ class RegisterContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text('Registro', style: AppTextStyles.authTextStyle),
+        Text('Registro', style: AppTextStyles(context).authTextStyle),
         const SizedBox(height: 50),
         AuthInputField(controller: firstNameController, label: 'Nombre(s)'),
         const SizedBox(height: 16),
@@ -56,7 +56,7 @@ class RegisterContent extends StatelessWidget {
         const SizedBox(height: 20),
         TextButton(
           onPressed: onToggle,
-          child: const Text('¿Tienes una cuenta? Inicia sesión', style: AppTextStyles.authBottomTextStyle),
+          child: Text('¿Tienes una cuenta? Inicia sesión', style: AppTextStyles(context).authBottomTextStyle),
         ),
       ],
     );

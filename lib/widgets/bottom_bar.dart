@@ -18,10 +18,10 @@ class BottomBar extends StatelessWidget {
       child: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onTap,
-        backgroundColor: AppColors.backgroundHelperColor,
+        backgroundColor: AppColors.of(context).bottomBarBackground,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primaryColor,
-        unselectedItemColor: AppColors.secondaryColor,
+        selectedItemColor: AppColors.of(context).bottomBarPrimaryItem,
+        unselectedItemColor: AppColors.of(context).bottomBarSecondaryItem,
         enableFeedback: false,
         showSelectedLabels: false,
         showUnselectedLabels: false,

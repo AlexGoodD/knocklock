@@ -93,13 +93,13 @@ class InputPasswordState extends State<InputPassword> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: _values[index].isNotEmpty
-                        ? AppColors.primaryColor
-                        : AppColors.helperInputColor,
+                        ? AppColors.of(context).primaryColor
+                        : AppColors.of(context).helperInputColor,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: isFocused
-                          ? AppColors.primaryColor
-                          : AppColors.helperInputColor,
+                          ? AppColors.of(context).primaryColor
+                          : AppColors.of(context).helperInputColor,
                       width: isFocused ? 2.0 : 1.5,
                     ),
                   ),

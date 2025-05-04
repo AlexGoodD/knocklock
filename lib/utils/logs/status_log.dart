@@ -12,8 +12,8 @@ class StatusLog extends StatelessWidget {
       width: 100.0, // Ancho fijo
       decoration: BoxDecoration(
         color: isSuccess
-            ? AppColors.successBackgroundColor
-            : AppColors.errorBackgroundColor,
+            ? AppColors.of(context).successBackgroundColor
+            : AppColors.of(context).errorBackgroundColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center( // Centra el texto
@@ -21,8 +21,8 @@ class StatusLog extends StatelessWidget {
           isSuccess ? 'Acceso correcto' : 'Acceso fallido',
           style: TextStyle(
             color: isSuccess
-                ? AppColors.successTextColor
-                : AppColors.errorTextColor,
+                ? AppColors.of(context).successTextColor
+                : AppColors.of(context).errorTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 10,
           ),

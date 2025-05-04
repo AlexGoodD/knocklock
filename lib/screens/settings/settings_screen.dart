@@ -1,3 +1,5 @@
+import 'package:provider/provider.dart';
+
 import '../../core/imports.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -22,14 +24,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Configuración',
-                  style: AppTextStyles.sectionPrimaryStyle,
+                  style: AppTextStyles(context).sectionPrimaryStyle,
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'Administra los ajustes generales de tu sistema y la aplicación',
-                  style: AppTextStyles.sectionSecondaryStyle,
+                  style: AppTextStyles(context).sectionSecondaryStyle,
                 ),
                 const SizedBox(height: 30),
                 Column(
@@ -50,11 +52,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: Icons.mode_night_outlined,
                         title: 'Apariencia',
                         description: 'Cambia el tema visual',
-                        initialValue: isTestMode,
+                        initialValue: Provider.of<ThemeProvider>(context).isDarkMode,
                         onChanged: (value) {
-                          setState(() {
-                            isTestMode = value;
-                          });
+                          Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
                         },
                       ),
                       OptionButton(

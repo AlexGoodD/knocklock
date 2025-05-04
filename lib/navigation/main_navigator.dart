@@ -52,13 +52,13 @@ class _MainNavigatorState extends State<MainNavigator> {
     ];
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.backgroundTop,
-            AppColors.backgroundBottom,
+            AppColors.of(context).backgroundTop,
+            AppColors.of(context).backgroundBottom,
           ],
         ),
       ),

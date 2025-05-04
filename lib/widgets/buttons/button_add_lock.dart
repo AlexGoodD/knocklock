@@ -9,20 +9,20 @@ class ButtonAddLock extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
       onPressed: onPressed,
-      backgroundColor: AppColors.primaryColor,
+      backgroundColor: AppColors.of(context).primaryColor,
       elevation: 0,
       highlightElevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
       label: Row(
-        children: const [
+        children: [
           Text(
             'Agregar',
-            style: TextStyle(color: AppColors.backgroundHelperColor),
+            style: TextStyle(color: AppColors.of(context).backgroundHelperColor),
           ),
           SizedBox(width: 10),
-          Icon(Icons.add_circle_outline, color: AppColors.backgroundHelperColor),
+          Icon(Icons.add_circle_outline, color: AppColors.of(context).backgroundHelperColor),
         ],
       ),
     );

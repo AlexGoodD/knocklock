@@ -28,14 +28,14 @@ class _LogsScreenState extends State<LogsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Historial de Accesos',
-              style: AppTextStyles.sectionPrimaryStyle,
+              style: AppTextStyles(context).sectionPrimaryStyle,
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'Revisa todos los intentos de desbloqueo de tus dispositivos',
-              style: AppTextStyles.sectionSecondaryStyle,
+              style: AppTextStyles(context).sectionSecondaryStyle,
             ),
             const SizedBox(height: 20),
             Expanded(

@@ -14,8 +14,8 @@ class PerfilInfoModal extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(20.0),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppColors.of(context).backgroundHelperColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -55,12 +55,12 @@ class PerfilInfoModal extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Perfil',
-                            style: AppTextStyles.sectionPrimaryStyle,
+                            style: AppTextStyles(context).sectionPrimaryStyle,
                             textAlign: TextAlign.center,
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.logout, color: AppColors.primaryColor),
+                          icon: Icon(Icons.logout, color: AppColors.of(context).primaryColor),
                           onPressed: () async {
                             Navigator.of(context).pop();
                             await authService.logoutUser(context);

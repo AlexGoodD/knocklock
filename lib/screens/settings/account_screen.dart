@@ -75,13 +75,13 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.backgroundTop,
-            AppColors.backgroundBottom,
+            AppColors.of(context).backgroundTop,
+            AppColors.of(context).backgroundBottom,
           ],
         ),
       ),
@@ -127,11 +127,11 @@ class _AccountScreenState extends State<AccountScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                            'Cuenta', style: AppTextStyles.sectionPrimaryStyle),
+                        Text(
+                            'Cuenta', style: AppTextStyles(context).sectionPrimaryStyle),
                         const SizedBox(height: 10),
-                        const Text('Administra tu perfil y preferencias',
-                            style: AppTextStyles.sectionSecondaryStyle),
+                        Text('Administra tu perfil y preferencias',
+                            style: AppTextStyles(context).sectionSecondaryStyle),
                         const SizedBox(height: 30),
                         Center(
                           child: CircularProfileButton(

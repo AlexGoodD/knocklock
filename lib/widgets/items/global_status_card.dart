@@ -8,7 +8,7 @@ class GlobalStatusCard extends StatelessWidget {
 
     final LockController lockController = LockController();
     return Card(
-      color: Colors.white,
+      color: AppColors.of(context).backgroundHelperColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -36,8 +36,8 @@ class GlobalStatusCard extends StatelessWidget {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _statusBox(context, '$desbloqueados desbloqueados', AppColors.successTextColor, AppColors.successBackgroundColor, AppColors.successTextColor),
-                    _statusBox(context, '$bloqueados bloqueados', AppColors.errorTextColor, AppColors.errorBackgroundColor, AppColors.errorTextColor),
+                    _statusBox(context, '$desbloqueados desbloqueados', AppColors.of(context).successTextColor, AppColors.of(context).successBackgroundColor, AppColors.of(context).successTextColor),
+                    _statusBox(context, '$bloqueados bloqueados', AppColors.of(context).errorTextColor, AppColors.of(context).errorBackgroundColor, AppColors.of(context).errorTextColor),
                   ],
                 );
               },
@@ -50,13 +50,13 @@ class GlobalStatusCard extends StatelessWidget {
                   return Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.warningTextColor, width: 1),
-                      color: AppColors.warningBackgroundColor,
+                      border: Border.all(color: AppColors.of(context).warningTextColor, width: 1),
+                      color: AppColors.of(context).warningBackgroundColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: const Text(
+                    child: Text(
                       'No hay intentos recientes.',
-                      style: TextStyle(color: AppColors.warningTextColor),
+                      style: TextStyle(color: AppColors.of(context).warningTextColor),
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -71,8 +71,8 @@ class GlobalStatusCard extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.warningTextColor, width: 1),
-                    color: AppColors.warningBackgroundColor,
+                    border: Border.all(color: AppColors.of(context).warningTextColor, width: 1),
+                    color: AppColors.of(context).warningBackgroundColor,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Row(
@@ -80,8 +80,8 @@ class GlobalStatusCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'Último intento: $estado en $nombreLock – $tiempoTranscurrido',
-                          style: const TextStyle(
-                            color: AppColors.warningTextColor,
+                          style: TextStyle(
+                            color: AppColors.of(context).warningTextColor,
                             fontSize: 11,
                           ),
                           overflow: TextOverflow.ellipsis,

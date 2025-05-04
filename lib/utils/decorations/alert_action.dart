@@ -21,7 +21,7 @@ class AlertAction extends StatelessWidget {
       child: Material(
         borderRadius: BorderRadius.circular(12),
         elevation: 6,
-        color: tipo == 'error' ? AppColors.errorBackgroundColor : AppColors.successBackgroundColor,
+        color: tipo == 'error' ? AppColors.of(context).errorBackgroundColor : AppColors.of(context).successBackgroundColor,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           constraints: const BoxConstraints(minWidth: 200, maxWidth: 300),
@@ -32,7 +32,7 @@ class AlertAction extends StatelessWidget {
             texto,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: tipo == 'error' ? AppColors.errorTextColor : AppColors.successTextColor,
+              color: tipo == 'error' ? AppColors.of(context).errorTextColor : AppColors.of(context).successTextColor,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),

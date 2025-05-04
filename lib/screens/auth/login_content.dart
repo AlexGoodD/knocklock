@@ -14,6 +14,7 @@ class LoginContent extends StatelessWidget {
       final email = emailController.text;
       final password = passwordController.text;
       final user = await authService.loginUser(email, password);
+
       if (user != null) {
         Navigator.pushReplacement(
           context,
@@ -27,7 +28,7 @@ class LoginContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text('Inicio de sesión', style: AppTextStyles.authTextStyle),
+        Text('Inicio de sesión', style: AppTextStyles(context).authTextStyle),
         const SizedBox(height: 50),
         AuthInputField(controller: emailController, label: 'Correo electrónico'),
         const SizedBox(height: 16),
@@ -37,7 +38,7 @@ class LoginContent extends StatelessWidget {
         const SizedBox(height: 20),
         TextButton(
           onPressed: onToggle,
-          child: const Text('¿No tienes una cuenta? Crea una', style: AppTextStyles.authBottomTextStyle),
+          child: Text('¿No tienes una cuenta? Crea una', style: AppTextStyles(context).authBottomTextStyle),
         ),
       ],
     );

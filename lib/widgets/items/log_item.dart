@@ -14,7 +14,7 @@ class LogCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        color: AppColors.backgroundHelperColor,
+        color: AppColors.of(context).backgroundHelperColor,
         elevation: 0.1,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -27,8 +27,8 @@ class LogCard extends StatelessWidget {
                   children: [
                     Text(
                       '${lock.name} (${lock.ip})',
-                      style: const TextStyle(
-                        color: AppColors.primaryColor,
+                      style: TextStyle(
+                        color: AppColors.of(context).primaryColor,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
@@ -38,15 +38,15 @@ class LogCard extends StatelessWidget {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.calendar_today,
-                          color: AppColors.primaryColor,
+                          color: AppColors.of(context).primaryColor,
                           size: 12,
                         ),
                         const SizedBox(width: 5),
                         Text(
                           '${log.timestamp.day} de ${_getMonthName(log.timestamp.month)} del ${log.timestamp.year}, ${DateFormat('h:mm a').format(log.timestamp)}',
-                          style: AppTextStyles.HelperItemsSecondaryStyle,
+                          style: AppTextStyles(context).helperItemsSecondaryStyle,
                         ),
                         const Spacer(),
                         StatusLog(isSuccess: log.estado == 'Acceso correcto'),

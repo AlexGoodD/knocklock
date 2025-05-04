@@ -25,7 +25,7 @@ class LockGridScreen extends StatelessWidget {
             children: [
               Text(
                 "Locks vinculados",
-                style: AppTextStyles.HelperPrimaryStyle,
+                style: AppTextStyles(context).helperPrimaryStyle,
               ),
               AnimatedOpacity(
                 opacity: isExpanded ? 0.0 : 1.0,
@@ -40,7 +40,7 @@ class LockGridScreen extends StatelessWidget {
                     onTap: onToggle,
                     child: Row(
                       children: [
-                        Text("Ver todos", style: AppTextStyles.HelperSecondaryStyle),
+                        Text("Ver todos", style: AppTextStyles(context).helperSecondaryStyle),
                         const SizedBox(width: 5),
                         const Icon(Icons.arrow_forward, size: 16),
                       ],

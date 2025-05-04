@@ -31,7 +31,7 @@ class AuthButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           label,
-          style: AppTextStyles.authButtonTextStyle,
+          style: AppTextStyles(context).authButtonTextStyle,
         ),
       ),
     );

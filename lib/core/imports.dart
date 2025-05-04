@@ -9,6 +9,8 @@ export 'package:rxdart/rxdart.dart';
 export 'package:vibration/vibration.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:path_provider/path_provider.dart';
+export 'package:share_plus/share_plus.dart';
+export 'package:shared_preferences/shared_preferences.dart';
 
 //Firebase
 export 'package:cloud_firestore/cloud_firestore.dart';
@@ -107,6 +109,7 @@ export 'package:knocklock_flutter/utils/helpers/calcular_tiempo_bloqueo.dart';
 export 'package:knocklock_flutter/utils/helpers/alerts_helper.dart';
 export 'package:knocklock_flutter/utils/helpers/normalizar_modo.dart';
 export 'package:knocklock_flutter/utils/helpers/mostrar_dialogo_texto.dart';
+export 'package:knocklock_flutter/utils/helpers/theme_provider.dart';
 
 export 'package:knocklock_flutter/utils/decorations/alert_action.dart';
 

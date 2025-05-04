@@ -18,7 +18,7 @@ class TestModeButton extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 5),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.of(context).backgroundHelperColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -37,10 +37,10 @@ class TestModeButton extends StatelessWidget {
                 Switch(
                   value: isTestMode,
                   onChanged: onSwitchChanged,
-                  activeColor: AppColors.backgroundHelperColor,
-                  activeTrackColor: AppColors.primaryColor,
-                  inactiveThumbColor: AppColors.backgroundHelperColor,
-                  inactiveTrackColor: AppColors.secondaryColor,
+                  activeColor: AppColors.of(context).backgroundHelperColor,
+                  activeTrackColor: AppColors.of(context).primaryColor,
+                  inactiveThumbColor: AppColors.of(context).backgroundHelperColor,
+                  inactiveTrackColor: AppColors.of(context).secondaryColor,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ],
