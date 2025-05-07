@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '../../core/colors.dart';
+
 class AnimatedRecordingIcon extends StatefulWidget {
   const AnimatedRecordingIcon({super.key});
 
@@ -36,7 +38,7 @@ class _AnimatedRecordingIconState extends State<AnimatedRecordingIcon>
         animation: _controller,
         builder: (context, child) {
           return CustomPaint(
-            painter: _AudioWavePainter(_controller.value),
+            painter: _AudioWavePainter(_controller.value, context),
           );
         },
       ),
@@ -47,13 +49,14 @@ class _AnimatedRecordingIconState extends State<AnimatedRecordingIcon>
 class _AudioWavePainter extends CustomPainter {
   final double progress;
   final int barCount = 4;
+  final BuildContext context;
 
-  _AudioWavePainter(this.progress);
+  _AudioWavePainter(this.progress, this.context);
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.of(context).primaryColor
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 4;
 

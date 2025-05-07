@@ -31,12 +31,7 @@ class _BlockAllButtonState extends State<BlockAllButton> with SingleTickerProvid
         await lockController.activarSeguroTodosLosLocks();
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Seguros activados en todos los Locks'),
-              duration: Duration(seconds: 2),
-            ),
-          );
+          mostrarAlertaGlobal('exito', 'Todos tus candados han sido bloqueados.');
         }
       },
       child: ScaleTransition(

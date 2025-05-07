@@ -29,9 +29,7 @@ class _AccountScreenState extends State<AccountScreen> {
         avatar: _selectedAvatar,
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Datos actualizados correctamente')),
-      );
+      mostrarAlertaGlobal('exito', 'Datos actualizados correctamente');
 
       setState(() {
         _isEditing = false;
@@ -40,9 +38,8 @@ class _AccountScreenState extends State<AccountScreen> {
         _selectedAvatar = null;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al actualizar los datos: $e')),
-      );
+
+      mostrarAlertaGlobal('error', 'Ocurrió un error al actualizar tus datos');
     }
   }
 

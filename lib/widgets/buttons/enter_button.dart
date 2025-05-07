@@ -30,7 +30,7 @@ class EnterButton extends StatelessWidget {
             ),
             child: Icon(
               IconName ?? Icons.dialpad,
-              color: Colors.black,
+              color: AppColors.of(context).primaryColor,
               size: 30,
             ),
           ),

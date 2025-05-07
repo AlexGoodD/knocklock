@@ -55,7 +55,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     children: const [
                       Section(
                         title: 'Versión de la aplicación',
-                        content: 'Versión 1.2.3 - Abril 2025',
+                        content: 'Versión 1.12.6 - Mayo 2025',
                       ),
                       SizedBox(height: 15),
                       Section(

@@ -33,12 +33,12 @@ class GeneralInput extends StatelessWidget {
             ),
           ),
         SizedBox(
-          width: width ?? MediaQuery.of(context).size.width * 0.8,
-          height: 65,
+          width: width ?? MediaQuery.of(context).size.width * 0.9,
+          height: 40,
           child: Container(
             decoration: BoxDecoration(
               color: AppColors.of(context).backgroundHelperColor,
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.of(context).primaryColor.withOpacity(0.1),
@@ -52,11 +52,11 @@ class GeneralInput extends StatelessWidget {
               obscureText: obscureText,
               enabled: enabled,
               decoration: InputDecoration(
-                labelText: label,
-                labelStyle: TextStyle(color: AppColors.of(context).primaryColor,),
-                floatingLabelStyle: TextStyle(color: AppColors.of(context).primaryColor,),
+                hintText: label,
+                hintStyle: TextStyle(color: AppColors.of(context).primaryColor),
+                isCollapsed: true, // elimina el espacio extra vertical
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
               ),
             ),
           ),

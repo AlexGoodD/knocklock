@@ -7,6 +7,7 @@ class Lock {
   final bool seguroActivo;
   final bool bloqueoActivoManual;
   final bool bloqueoActivoIntentos;
+  final bool esInvitado;
 
   Lock({
     required this.id,
@@ -15,6 +16,7 @@ class Lock {
     required this.seguroActivo,
     required this.bloqueoActivoManual,
     required this.bloqueoActivoIntentos,
+    this.esInvitado = false,
   });
 
   factory Lock.fromFirestore(DocumentSnapshot doc) {

@@ -28,7 +28,7 @@ class LoginContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('Inicio de sesión', style: AppTextStyles(context).authTextStyle),
+        Text('Inicio de sesión', style: AppTextStyles(context).authTextStyle.copyWith(color: Colors.black)),
         const SizedBox(height: 50),
         AuthInputField(controller: emailController, label: 'Correo electrónico'),
         const SizedBox(height: 16),
@@ -38,7 +38,7 @@ class LoginContent extends StatelessWidget {
         const SizedBox(height: 20),
         TextButton(
           onPressed: onToggle,
-          child: Text('¿No tienes una cuenta? Crea una', style: AppTextStyles(context).authBottomTextStyle),
+          child: Text('¿No tienes una cuenta? Crea una', style: AppTextStyles(context).authBottomTextStyle.copyWith(color: Colors.black)),
         ),
       ],
     );

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import '../inputs/input_password.dart';
 import 'package:knocklock_flutter/core/imports.dart';
 
 class NewPasswordModal extends StatefulWidget {
@@ -32,14 +30,11 @@ class _NewPasswordModalState extends State<NewPasswordModal> {
       });
     } else {
       if (enteredPassword == firstPassword) {
-        print("Contraseñas iguales");
         await lockController.guardarClave(widget.lockId, enteredPassword);
         Navigator.pop(context, enteredPassword);
       } else {
         print("Contraseñas diferentes");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Las contraseñas no coinciden")),
-        );
+        mostrarAlertaGlobal('error', 'Las contraseñas no coinciden');
         _passwordKey.currentState?.clear();
       }
     }

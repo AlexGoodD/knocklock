@@ -58,9 +58,9 @@ class _SwitchOptionButtonState extends State<SwitchOptionButton> {
             width: 35,
             height: 45,
             decoration: BoxDecoration(
-              color: AppColors.of(context).helperColor,
+              color: AppColors.of(context).backgroundHelperColor,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 1),
+              border: Border.all(color: AppColors.of(context).primaryColor, width: 1),
             ),
             child: Icon(widget.icon, color: AppColors.of(context).primaryColor),
           ),

@@ -54,7 +54,6 @@ export 'package:knocklock_flutter/services/user_service.dart';
 
 //Widgets
 export 'package:knocklock_flutter/widgets/modals/add_new_lock_modal.dart';
-export 'package:knocklock_flutter/widgets/modals/quick_access_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/select_avatar_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/perfil_info_modal.dart';
 export 'package:knocklock_flutter/widgets/modals/new_password_modal.dart';
@@ -109,7 +108,7 @@ export 'package:knocklock_flutter/utils/helpers/calcular_tiempo_bloqueo.dart';
 export 'package:knocklock_flutter/utils/helpers/alerts_helper.dart';
 export 'package:knocklock_flutter/utils/helpers/normalizar_modo.dart';
 export 'package:knocklock_flutter/utils/helpers/mostrar_dialogo_texto.dart';
-export 'package:knocklock_flutter/utils/helpers/theme_provider.dart';
+export 'package:knocklock_flutter/core/theme_provider.dart';
 
 export 'package:knocklock_flutter/utils/decorations/alert_action.dart';
 

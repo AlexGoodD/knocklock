@@ -121,7 +121,7 @@ class InputPasswordState extends State<InputPassword> {
             child: TextField(
               controller: _hiddenController,
               focusNode: _hiddenFocusNode,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.text,
               maxLength: widget.length,
               onChanged: onChanged,
               autofocus: true,

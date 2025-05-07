@@ -34,7 +34,7 @@ class OptionButton extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: AppColors.of(context).helperBorderColor),
+            side: BorderSide(color: AppColors.of(context).helperColor),
           ),
         ).copyWith(
           overlayColor: MaterialStateProperty.all(Colors.transparent),
@@ -48,7 +48,7 @@ class OptionButton extends StatelessWidget {
               width: 35,
               height: 45,
               decoration: BoxDecoration(
-                color: AppColors.of(context).helperColor,
+                color: AppColors.of(context).backgroundHelperColor,
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.of(context).primaryColor, width: 1),
               ),

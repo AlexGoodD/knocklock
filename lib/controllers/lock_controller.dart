@@ -270,13 +270,26 @@ class LockController {
   Future<void> agregarLock(String nombre, String ip) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-
       if (user == null) {
         print('⚠️ No hay un usuario autenticado.');
         return;
       }
 
-      // Agrega el lock con el uid del usuario
+      // Buscar si ya existe un lock con esa IP
+      final existingLocks = await _firestoreService.getLocksByIp(ip);
+      if (existingLocks.isNotEmpty) {
+        final existingLock = existingLocks.first;
+        final createdBy = existingLock['createdBy'];
+
+        if (createdBy != user.uid) {
+          // Es un invitado: relaciona al usuario con ese lock
+          await _firestoreService.asociarUsuarioInvitado(user.uid, existingLock['id']);
+          print('🔑 Usuario agregado como invitado al lock existente.');
+          return;
+        }
+      }
+
+      // Crear un lock nuevo si no existe
       final lockRef = await _firestoreService.addLock({
         'name': nombre,
         'ip': ip,
@@ -290,14 +303,9 @@ class LockController {
         'modoPrueba': false,
       });
 
-      // Configura las contraseñas iniciales
       await _firestoreService.setInitialPasswords(lockRef.id);
       await _realtimeDBService.createInitialPasswords(lockRef.id);
-
-      // Agrega el lock a RTBD junto con el IP
-      await FirebaseDatabase.instance
-          .ref("locks/${lockRef.id}")
-          .update({
+      await FirebaseDatabase.instance.ref("locks/${lockRef.id}").update({
         "ip": ip,
       });
 
@@ -312,7 +320,7 @@ class LockController {
       return Stream.value([]);
     }
 
-    return Stream.fromFuture(_firestoreService.getLocksByUser(user.uid)).map((locksData) {
+    return _firestoreService.getLocksByUserStream(user.uid).map((locksData) {
       return locksData.map((data) {
         return Lock(
           id: data['id'],
@@ -321,6 +329,7 @@ class LockController {
           seguroActivo: data['seguroActivo'] ?? false,
           bloqueoActivoManual: data['bloqueoActivoManual'] ?? false,
           bloqueoActivoIntentos: data['bloqueoActivoIntentos'] ?? false,
+          esInvitado: data['esInvitado'] ?? false,
         );
       }).toList();
     });
@@ -345,7 +354,6 @@ class LockController {
       await _firestoreService.updateLockMode(lockId, nuevoModo);
       await _realtimeDBService.updateLockMode(lockId, nuevoModo);
     } catch (e) {
-      print("Error al guardar el modo: $e");
     }
   }
 
@@ -358,7 +366,7 @@ class LockController {
     final modo = normalizarModo(modoRaw);
 
     if (bloqueoActivoManual || bloqueoActivoIntentos) {
-      mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
+      mostrarAlertaGlobal('error', 'El dispositivo está bloqueado.');
       return;
     }
 
@@ -379,7 +387,7 @@ class LockController {
       }
 
       if (!hasPassword) {
-        mostrarAlertaGlobal('error', 'No se puede cambiar el estado: no hay contraseña configurada para el modo actual. $modo');
+        mostrarAlertaGlobal('error', 'Ingresa una contraseña para bloquear el candado.');
         print('Hola');
         return;
       }
@@ -393,7 +401,6 @@ class LockController {
       }
 
     } catch (e) {
-      print("❌ Error al cambiar estado de seguroActivo: $e");
     }
   }
 
@@ -470,33 +477,27 @@ class LockController {
 
   Future<void> bloquearTodosLosLocks() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      print('⚠️ Usuario no autenticado');
-      return;
-    }
+    if (user == null) return;
 
     try {
       final locks = await _firestoreService.getLocksByUser(user.uid);
       final now = DateTime.now();
-      final bloqueoTermina = now.add(const Duration(hours: 1)); // 1 hora de bloqueo
+      final bloqueoTermina = now.add(const Duration(hours: 1));
 
       for (final lock in locks) {
+        if (lock['createdBy'] != user.uid) continue;
+
         final lockId = lock['id'];
 
-        // Actualizar en Firestore
         await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
           'seguroActivo': true,
           'bloqueoActivoManual': true,
           'bloqueoTimestamp': Timestamp.fromDate(bloqueoTermina),
         });
 
-        // Actualizar también en Realtime Database si quieres
         await _realtimeDBService.bloquearLock(lockId, bloqueoTermina);
       }
-
-      print('✅ Todos los locks han sido bloqueados correctamente');
     } catch (e) {
-      print('❌ Error al bloquear todos los locks: $e');
     }
   }
 
@@ -525,8 +526,6 @@ class LockController {
               'bloqueoTimestamp': null,
               'intentos': 1, // Reinicia a 1 intento
             });
-
-            print('🔓 Lock $lockId desbloqueado automáticamente por intentos.');
           }
         }
       }
@@ -540,7 +539,7 @@ class LockController {
   Future<void> activarSeguroTodosLosLocks() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      print('⚠️ Usuario no autenticado');
+      mostrarAlertaGlobal('error', 'Usuario no autenticado');
       return;
     }
 
@@ -556,10 +555,7 @@ class LockController {
 
         await _realtimeDBService.updateLockSecureState(lockId, true);
       }
-
-      print('🔒 Todos los locks ahora tienen seguroActivo = true');
     } catch (e) {
-      print('❌ Error al activar seguro en todos los locks: $e');
     }
   }
 
@@ -587,10 +583,7 @@ class LockController {
           .collection('passwords')
           .doc('Clave')
           .set({'value': hashedPassword});
-
-      print('✅ Contraseña guardada correctamente');
     } catch (e) {
-      print('❌ Error al guardar la contraseña: $e');
     }
   }
 
@@ -604,7 +597,6 @@ class LockController {
           .get();
 
       if (!doc.exists) {
-        print('⚠️ No se encontró una contraseña guardada para $tipo');
         return false;
       }
 
@@ -623,7 +615,6 @@ class LockController {
             'value': null,
             'createdAt': null,
           });
-          print('⏳ Token expirado y eliminado automáticamente');
           return false;
         }
       }
@@ -633,7 +624,6 @@ class LockController {
 
       return hashedPasswordGuardada == hashedPasswordIngresada;
     } catch (e) {
-      print('❌ Error al verificar $tipo: $e');
       return false;
     }
   }
@@ -650,10 +640,7 @@ class LockController {
         'value': hashedPassword,
         'createdAt': FieldValue.serverTimestamp(),
       });
-
-      print('✅ Contraseña guardada correctamente en $tipoPassword');
     } catch (e) {
-      print('❌ Error al guardar la contraseña: $e');
     }
   }
 
@@ -681,7 +668,7 @@ class LockController {
         'intentos': 0,
       });
 
-      mostrarAlertaGlobal('error', '🔒 Candado bloqueado por intentos fallidos. Intenta en 5 minutos.');
+      mostrarAlertaGlobal('error', 'Candado bloqueado. Intenta en 5 minutos.');
     } else {
       await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
         'intentos': intentos,
@@ -699,59 +686,51 @@ class LockController {
 
   Future<void> activarModoPruebaEnTodosLosLocks() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      print('⚠️ Usuario no autenticado');
-      return;
-    }
+    if (user == null) return;
 
     try {
       final locks = await _firestoreService.getLocksByUser(user.uid);
 
       for (final lock in locks) {
-        final lockId = lock['id'];
+        if (lock['createdBy'] != user.uid) continue;
 
-        // Actualizar en Firestore
+        final lockId = lock['id'];
         await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
           'modoPrueba': true,
         });
 
-        // (Opcional) Actualizar también en Realtime Database
         await FirebaseDatabase.instance
             .ref("locks/$lockId")
             .update({'modoPrueba': true});
       }
 
-      mostrarAlertaGlobal('exito', 'Todos los locks están ahora en modo prueba.');
+      mostrarAlertaGlobal('exito', 'Modo de prueba activado.');
     } catch (e) {
-      mostrarAlertaGlobal('error', 'Error al activar modo prueba.');
+      mostrarAlertaGlobal('error', 'Error al activar modo de prueba.');
     }
   }
 
   Future<void> desactivarModoPruebaEnTodosLosLocks() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      print('⚠️ Usuario no autenticado');
-      return;
-    }
+    if (user == null) return;
 
     try {
       final locks = await _firestoreService.getLocksByUser(user.uid);
 
       for (final lock in locks) {
-        final lockId = lock['id'];
+        if (lock['createdBy'] != user.uid) continue;
 
-        // Actualizar en Firestore
+        final lockId = lock['id'];
         await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
           'modoPrueba': false,
         });
 
-        // (Opcional) Actualizar también en Realtime Database
         await FirebaseDatabase.instance
             .ref("locks/$lockId")
             .update({'modoPrueba': false});
       }
 
-      mostrarAlertaGlobal('exito', 'Ya no se encuentran tus locks en modo prueba.');
+      mostrarAlertaGlobal('exito', 'Modo prueba desactivado.');
     } catch (e) {
       mostrarAlertaGlobal('error', 'Error al desactivar modo prueba.');
     }
@@ -760,7 +739,7 @@ class LockController {
   Future<void> exportarLogsDelUsuarioAExcel() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      mostrarAlertaGlobal('error', '⚠️ Usuario no autenticado');
+      mostrarAlertaGlobal('error', 'Usuario no autenticado');
       return;
     }
 
@@ -816,7 +795,6 @@ class LockController {
         mostrarAlertaGlobal('error', 'No se pudo generar el archivo.');
       }
     } catch (e) {
-      print('❌ Error al exportar logs: $e');
       mostrarAlertaGlobal('error', 'Error inesperado al exportar los logs.');
     }
   }
@@ -846,7 +824,7 @@ class LockController {
     _seguroAutoTimer = Timer.periodic(const Duration(minutes: 5), (_) async {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        print('⚠️ Usuario no autenticado');
+        mostrarAlertaGlobal('error', "Usuario no autenticado");
         return;
       }
 
@@ -854,6 +832,8 @@ class LockController {
         final locks = await _firestoreService.getLocksByUser(user.uid);
 
         for (final lock in locks) {
+          if (lock['createdBy'] != user.uid) continue;
+
           final lockId = lock['id'];
           final seguroActivo = lock['seguroActivo'] ?? false;
 
@@ -865,19 +845,17 @@ class LockController {
             await _realtimeDBService.updateLockSecureState(lockId, true);
           }
         }
-
-        print('✅ Verificación periódica completada: seguros activados donde fue necesario');
       } catch (e) {
-        print('❌ Error al ejecutar seguro automático: $e');
+        mostrarAlertaGlobal('error', 'Ocurrió un error al activar bloque automático.');
       }
     });
 
-    mostrarAlertaGlobal('exito', 'Bloqueo automático activado para tus locks');
+    mostrarAlertaGlobal('exito', 'Bloqueo automático activado (5 minutos).');
   }
 
   void desactivarSeguroAutomatico() {
     _seguroAutoTimer?.cancel();
     _seguroAutoTimer = null;
-    mostrarAlertaGlobal('error', 'Bloqueo automático desactivado para tus locks');
+    mostrarAlertaGlobal('exito', 'Bloqueo automático desactivado');
   }
 }

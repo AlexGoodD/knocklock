@@ -125,50 +125,51 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                             style: AppTextStyles(context).primaryTextStyle,
                           ),
                           const SizedBox(height: 45),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ModeButton(
-                                icon: Icons.back_hand,
-                                label: "PATRÓN",
-                                isSelected: modo == "PATRÓN",
-                                onTap: () {
-                                  if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
-                                    mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
-                                    return;
-                                  }
-                                  widget.controller.seleccionarModo("PATRÓN");
-                                  widget.controller.verificarPassword('Patron', context, widget.lock);
-                                },
-                              ),
-                              ModeButton(
-                                icon: Icons.password,
-                                label: "CLAVE",
-                                isSelected: modo == "CLAVE",
-                                onTap: () {
-                                  if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
-                                    mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
-                                    return;
-                                  }
-                                  widget.controller.seleccionarModo("CLAVE");
-                                  widget.controller.verificarPassword('Clave', context, widget.lock);
-                                },
-                              ),
-                              ModeButton(
-                                icon: Icons.shuffle,
-                                label: "TOKEN",
-                                isSelected: modo == "TOKEN",
-                                onTap: () {
-                                  if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
-                                    mostrarAlertaGlobal('error', 'No se puede cambiar el estado: el dispositivo está bloqueado.');
-                                    return;
-                                  }
-                                  widget.controller.seleccionarModo("TOKEN");
-                                  widget.controller.verificarPassword('Token', context, widget.lock);
-                                },
-                              ),
-                            ],
-                          ),
+                          if (!widget.lock.esInvitado)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ModeButton(
+                                  icon: Icons.back_hand,
+                                  label: "PATRÓN",
+                                  isSelected: modo == "PATRÓN",
+                                  onTap: () {
+                                    if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+                                      mostrarAlertaGlobal('error', 'El dispositivo está bloqueado.');
+                                      return;
+                                    }
+                                    widget.controller.seleccionarModo("PATRÓN");
+                                    widget.controller.verificarPassword('Patron', context, widget.lock);
+                                  },
+                                ),
+                                ModeButton(
+                                  icon: Icons.password,
+                                  label: "CLAVE",
+                                  isSelected: modo == "CLAVE",
+                                  onTap: () {
+                                    if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+                                      mostrarAlertaGlobal('error', 'El dispositivo está bloqueado.');
+                                      return;
+                                    }
+                                    widget.controller.seleccionarModo("CLAVE");
+                                    widget.controller.verificarPassword('Clave', context, widget.lock);
+                                  },
+                                ),
+                                ModeButton(
+                                  icon: Icons.shuffle,
+                                  label: "TOKEN",
+                                  isSelected: modo == "TOKEN",
+                                  onTap: () {
+                                    if (widget.lock.bloqueoActivoManual || widget.lock.bloqueoActivoIntentos) {
+                                      mostrarAlertaGlobal('error', 'El dispositivo está bloqueado.');
+                                      return;
+                                    }
+                                    widget.controller.seleccionarModo("TOKEN");
+                                    widget.controller.verificarPassword('Token', context, widget.lock);
+                                  },
+                                ),
+                              ],
+                            ),
                         ],
                       );
                     },
@@ -179,51 +180,51 @@ class _LockDetailScreenState extends State<LockDetailScreen> {
                     curve: Curves.easeInOut,
                     alignment: Alignment.topCenter,
                     child: ValueListenableBuilder<String>(
-                        valueListenable: widget.controller.modoSeleccionado,
-                        builder: (context, modo, child) {
-                          return ValueListenableBuilder<bool>(
-                            valueListenable: widget.controller.mostrarBotonGrabacion,
-                            builder: (context, mostrar, _) {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  if (modo == "PATRÓN")
-                                    RecordingButton(
-                                      mostrar: mostrar,
-                                      onTap: () {
-                                        widget.controller.iniciarGrabacion(context, widget.lock, "Patron");
-                                      },
-                                    ),
-                                  if (modo == "CLAVE")
-                                    EnterButton(
-                                      mostrar: mostrar,
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          backgroundColor: Colors.transparent,
-                                          isScrollControlled: true,
-                                          builder: (context) => NewPasswordModal(lockId: widget.lock.id),
-                                        );
-                                      },
-                                    ),
-                                  if (modo == "TOKEN")
-                                    EnterButton(
-                                      IconName: Icons.shuffle,
-                                      mostrar: mostrar,
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          backgroundColor: Colors.transparent,
-                                          isScrollControlled: true,
-                                          builder: (context) => TokenModal(lockId: widget.lock.id),
-                                        );
-                                      },
-                                    ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                      valueListenable: widget.controller.modoSeleccionado,
+                      builder: (context, modo, child) {
+                        return ValueListenableBuilder<bool>(
+                          valueListenable: widget.controller.mostrarBotonGrabacion,
+                          builder: (context, mostrar, _) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (modo == "PATRÓN")
+                                  RecordingButton(
+                                    mostrar: mostrar,
+                                    onTap: () {
+                                      widget.controller.iniciarGrabacion(context, widget.lock, "Patron");
+                                    },
+                                  ),
+                                if (modo == "CLAVE")
+                                  EnterButton(
+                                    mostrar: mostrar,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        builder: (context) => NewPasswordModal(lockId: widget.lock.id),
+                                      );
+                                    },
+                                  ),
+                                if (modo == "TOKEN")
+                                  EnterButton(
+                                    IconName: Icons.shuffle,
+                                    mostrar: mostrar,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        builder: (context) => TokenModal(lockId: widget.lock.id),
+                                      );
+                                    },
+                                  ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 70),

@@ -15,7 +15,7 @@ class PerfilInfoModal extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: AppColors.of(context).backgroundHelperColor,
+        color: AppColors.of(context).backgroundTop,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(

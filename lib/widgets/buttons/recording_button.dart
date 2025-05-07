@@ -28,7 +28,7 @@ class RecordingButton extends StatelessWidget {
             ),
             child: Icon(
               Icons.mic,
-              color: Colors.black,
+              color: AppColors.of(context).primaryColor,
               size: 30,
             ),
           ),

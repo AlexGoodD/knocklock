@@ -12,14 +12,14 @@ Future<String?> mostrarDialogoTexto(
     context: context,
     barrierDismissible: false,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.of(context).backgroundTop,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
         side: const BorderSide(color: Colors.grey, width: 1.0),
       ),
       title: Text(
         titulo,
-        style: const TextStyle(color: Colors.black),
+        style: TextStyle(color: AppColors.of(context).primaryColor),
       ),
       content: SizedBox(
         height: MediaQuery.of(context).size.height * 0.1,
@@ -32,9 +32,9 @@ Future<String?> mostrarDialogoTexto(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text(
+          child: Text(
             'Cancelar',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: AppColors.of(context).primaryColor),
           ),
         ),
         ElevatedButton(
@@ -67,25 +67,25 @@ Future<bool> mostrarDialogoConfirmacion(BuildContext context, String mensaje) as
     context: context,
     barrierDismissible: false,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.of(context).backgroundTop,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
         side: const BorderSide(color: Colors.grey, width: 1.0),
       ),
-      title: const Text(
+      title: Text(
         'Confirmar',
-        style: TextStyle(color: Colors.black),
+        style: TextStyle(color: AppColors.of(context).primaryColor),
       ),
       content: Text(
         mensaje,
-        style: const TextStyle(color: Colors.black87),
+        style: TextStyle(color: AppColors.of(context).primaryColor),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: const Text(
+          child: Text(
             'Cancelar',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: AppColors.of(context).primaryColor),
           ),
         ),
         ElevatedButton(

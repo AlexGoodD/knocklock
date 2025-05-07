@@ -32,10 +32,11 @@ class AuthInputField extends StatelessWidget {
         child: TextField(
           controller: controller,
           obscureText: obscureText,
+          style: const TextStyle(color: Colors.black),
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: const TextStyle(color: Colors.black), // <-- Color cuando no está focus
-            floatingLabelStyle: const TextStyle(color: Colors.black), // <-- Color cuando está focus
+            labelStyle: const TextStyle(color: Colors.black),
+            floatingLabelStyle: const TextStyle(color: Colors.black),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),

@@ -82,6 +82,20 @@ class FirestoreService {
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
+  Stream<List<Map<String, dynamic>>> getLocksByUserStream(String userId) {
+    return _firestore
+        .collection('locks')
+        .where('createdBy', isEqualTo: userId)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+    });
+  }
+
   Future<List<Map<String, dynamic>>> getLocksByUser(String userId) async {
     final querySnapshot = await _firestore
         .collection('locks')
@@ -235,6 +249,36 @@ class FirestoreService {
       'intentos': 3,
       'bloqueoActivoIntentos': false,
       'bloqueoTimestamp': null,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getLocksByIp(String ip) async {
+    final querySnapshot = await _firestore
+        .collection('locks')
+        .where('ip', isEqualTo: ip)
+        .get();
+
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
+  }
+
+  Future<void> asociarUsuarioInvitado(String userId, String lockId) async {
+    // Agrega al usuario a la subcolección 'invitados' del lock
+    await _firestore
+        .collection('locks')
+        .doc(lockId)
+        .collection('invitados')
+        .doc(userId)
+        .set({
+      'desde': FieldValue.serverTimestamp(),
+    });
+
+    // (Opcional) Marcar este lock como compartido en algún campo
+    await _firestore.collection('locks').doc(lockId).update({
+      'tieneInvitados': true,
     });
   }
 }
