@@ -93,7 +93,7 @@ class InputPasswordState extends State<InputPassword> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: _values[index].isNotEmpty
-                        ? AppColors.of(context).primaryColor
+                        ? AppColors.of(context).helperColor
                         : AppColors.of(context).helperInputColor,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(

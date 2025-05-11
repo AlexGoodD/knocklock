@@ -53,8 +53,8 @@ class _TokenModalState extends State<TokenModal> {
       builder: (context, constraints) {
         return Container(
           padding: const EdgeInsets.all(20.0),
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            color: AppColors.of(context).backgroundTop,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: SafeArea(

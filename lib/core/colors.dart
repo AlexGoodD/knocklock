@@ -228,14 +228,14 @@ class AppTextStyles {
   );
 
   TextStyle get titleAlertTextStyle => TextStyle(
-    color: AlertColors.titleAlertColor,
+    color: AlertColors.of(context).titleAlertColor,
     fontFamily: 'Roboto',
     fontWeight: FontWeight.w500,
     fontSize: 16,
   );
 
   TextStyle get subtitleAlertTextStyle => TextStyle(
-    color: AlertColors.subtitleAlertColor,
+    color: AlertColors.of(context).subtitleAlertColor,
     fontFamily: 'Roboto',
     fontWeight: FontWeight.w400,
     fontSize: 13,
@@ -252,9 +252,9 @@ class AlertColors {
     return AlertColors(brightness == Brightness.dark);
   }
 
-  static const Color titleAlertColor = Color(0xFF000000);
+  Color get titleAlertColor => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
 
-  static const Color subtitleAlertColor = Color(0xFF767D79);
+  Color get subtitleAlertColor => isDark ? const Color(0xFFB2B2B2) : const Color(0xFF767D79);
 
   Color get successAlertBackgroundColor =>
       isDark ? const Color(0xFFEBFAF2) : const Color(0xFFEBFAF2);

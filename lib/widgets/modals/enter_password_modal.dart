@@ -46,9 +46,9 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
       builder: (context, constraints) {
         return Container(
           padding: const EdgeInsets.all(20.0),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          decoration: BoxDecoration(
+            color: AppColors.of(context).backgroundTop,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: SafeArea(
             child: SingleChildScrollView(
@@ -84,7 +84,7 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
+                          backgroundColor: AppColors.of(context).primaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -93,8 +93,8 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
                         onPressed: _handleVerifyPassword,
                         child: Text(
                           'Ingresar',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.of(context).helperColor,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),

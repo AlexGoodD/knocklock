@@ -119,6 +119,7 @@ class LockController {
       await _firestoreService.registrarAccesoCorrecto(_lockId!);
       cambiarEstadoSeguro(_lockId!, false);
     } else if (message.contains("ACCESO_FALLIDO")) {
+      mostrarAlertaGlobal('error', 'Contraseña incorrecta');
       await _firestoreService.registrarIntentoFallido(_lockId!);
       cambiarEstadoSeguro(_lockId!, true);
     } else if (message.contains("ACCESO_BLOQUEADO_TEMPORALMENTE")) {
@@ -590,40 +591,64 @@ class LockController {
 
   Future<bool> verificarClave(String lockId, String passwordIngresada, String tipo) async {
     try {
-      final doc = await FirebaseFirestore.instance
+      final hashedPasswordIngresada =
+      sha256.convert(utf8.encode(passwordIngresada)).toString();
+
+      // Primero intenta con el tipo proporcionado
+      final docPrincipal = await FirebaseFirestore.instance
           .collection('locks')
           .doc(lockId)
           .collection('passwords')
           .doc(tipo)
           .get();
 
-      if (!doc.exists) {
-        return false;
-      }
+      if (docPrincipal.exists) {
+        final data = docPrincipal.data();
+        final hashedPasswordGuardada = data?['value'];
+        final Timestamp? createdAt = data?['createdAt'];
 
-      final data = doc.data();
-      final hashedPasswordGuardada = data?['value'];
-      final Timestamp? createdAt = data?['createdAt'];
+        if (tipo == 'Token' && createdAt != null) {
+          final now = DateTime.now();
+          final tokenTime = createdAt.toDate();
+          final difference = now.difference(tokenTime);
 
-      if (tipo == 'Token' && createdAt != null) {
-        final now = DateTime.now();
-        final tokenTime = createdAt.toDate();
-        final difference = now.difference(tokenTime);
+          if (difference.inMinutes >= 1) {
+            // Eliminar token expirado
+            await docPrincipal.reference.update({
+              'value': null,
+              'createdAt': null,
+            });
+            return false;
+          }
+        }
 
-        if (difference.inMinutes >= 1) {
-          // Eliminar token expirado
-          await doc.reference.update({
-            'value': null,
-            'createdAt': null,
-          });
-          return false;
+        if (hashedPasswordGuardada == hashedPasswordIngresada) {
+          return true;
         }
       }
 
-      final hashedPasswordIngresada =
-      sha256.convert(utf8.encode(passwordIngresada)).toString();
+      // Si es tipo Token y no coincidió, intenta con la contraseña tipo Clave
+      if (tipo == 'Token') {
+        final docClave = await FirebaseFirestore.instance
+            .collection('locks')
+            .doc(lockId)
+            .collection('passwords')
+            .doc('Clave')
+            .get();
 
-      return hashedPasswordGuardada == hashedPasswordIngresada;
+        if (docClave.exists) {
+          final dataClave = docClave.data();
+          final hashedPasswordClave = dataClave?['value'];
+
+          if (hashedPasswordClave == hashedPasswordIngresada) {
+            return true;
+          } else {
+            mostrarAlertaGlobal('error', 'Contraseña incorrecta');
+          }
+        }
+      }
+
+      return false;
     } catch (e) {
       return false;
     }
