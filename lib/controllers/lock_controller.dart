@@ -497,6 +497,7 @@ class LockController {
 
         await _realtimeDBService.bloquearLock(lockId, bloqueoTermina);
       }
+      mostrarAlertaGlobal('exito', 'Se ha activado el bloqueo total');
     } catch (e) {
     }
   }
