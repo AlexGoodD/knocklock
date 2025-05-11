@@ -176,7 +176,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           obscureText: true,
                           enabled: _isEditing,
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 80),
                       ],
                     ),
                   );
