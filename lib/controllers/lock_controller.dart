@@ -5,6 +5,8 @@ import 'package:knocklock_flutter/core/imports.dart';
 import 'package:http/http.dart' as http;
 import 'package:excel/excel.dart';
 
+import '../services/websocket_service.dart';
+
 class LockController {
   static final LockController _instance = LockController._internal();
   factory LockController() => _instance;
