@@ -49,7 +49,7 @@ class LogCard extends StatelessWidget {
                           style: AppTextStyles(context).helperItemsSecondaryStyle,
                         ),
                         const Spacer(),
-                        StatusLog(isSuccess: log.estado == 'Acceso correcto'),
+                        StatusLog(isSuccess: log.estado)
                       ],
                     ),
                   ],

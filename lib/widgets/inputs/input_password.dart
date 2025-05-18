@@ -105,11 +105,7 @@ class InputPasswordState extends State<InputPassword> {
                   ),
                   child: Text(
                     _showCharacters[index] ? _values[index] : (_values[index].isNotEmpty ? '*' : ''),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTextStyles(context).helperPrimaryStyle
                   ),
                 );
               }),

@@ -120,7 +120,7 @@ class LockController {
       cambiarEstadoSeguro(_lockId!, false);
     } else if (message.contains("ACCESO_FALLIDO")) {
       mostrarAlertaGlobal('error', 'Contraseña incorrecta');
-      await _firestoreService.registrarIntentoFallido(_lockId!);
+      await _firestoreService.registrarAccesoFallido(_lockId!);
       cambiarEstadoSeguro(_lockId!, true);
     } else if (message.contains("ACCESO_BLOQUEADO_TEMPORALMENTE")) {
       cambiarEstadoSeguro(_lockId!, true);
@@ -453,7 +453,11 @@ class LockController {
     }
 
     yield* _firestoreService.getAccessLogsByUser(user.uid).map((logsData) {
-      return logsData.map((data) => AccessLog.fromMap(data)).toList();
+      final logs = logsData.map((data) => AccessLog.fromMap(data)).toList();
+
+      logs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+      return logs;
     });
   }
 
@@ -670,36 +674,9 @@ class LockController {
     }
   }
 
-  Future<void> registrarIntentoFallido(String lockId) async {
+  Future<bool> esModoPrueba(String lockId) async {
     final doc = await _firestoreService.getLockById(lockId);
-    final data = doc.data();
-
-    final bool modoPrueba = data?['modoPrueba'] ?? false;
-
-    if (modoPrueba) {
-      return;
-    }
-
-    int intentos = data?['intentos'] ?? 3;
-    bool bloqueoIntentos = data?['bloqueoActivoIntentos'] ?? false;
-
-    if (bloqueoIntentos) return;
-
-    intentos--;
-
-    if (intentos <= 0) {
-      await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
-        'bloqueoActivoIntentos': true,
-        'bloqueoTimestamp': Timestamp.now(),
-        'intentos': 0,
-      });
-
-      mostrarAlertaGlobal('error', 'Candado bloqueado. Intenta en 5 minutos.');
-    } else {
-      await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
-        'intentos': intentos,
-      });
-    }
+    return doc.data()?['modoPrueba'] ?? false;
   }
 
   Future<void> restablecerIntentos(String lockId) async {
@@ -799,7 +776,7 @@ class LockController {
 
         sheet.appendRow([
           TextCellValue(log['lockId'] ?? ''),
-          TextCellValue(log['estado'] ?? ''),
+          TextCellValue(log['access'] == true ? 'Acceso correcto' : 'Acceso fallido'),
           TextCellValue(timestamp?.toIso8601String() ?? 'Fecha inválida'),
         ]);
       }

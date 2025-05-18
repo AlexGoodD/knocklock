@@ -62,7 +62,10 @@ class AddNewLockModal extends StatelessWidget {
                     width: 340, // Ancho fijo
                     height: 50, // Alto fijo
                     child: ElevatedButton(
-                      onPressed: onAdd,
+                      onPressed: () {
+                        onAdd();
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.of(context).primaryColor,
                         shape: RoundedRectangleBorder(

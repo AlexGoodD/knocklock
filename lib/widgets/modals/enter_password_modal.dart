@@ -29,12 +29,12 @@ class _EnterPasswordModalState extends State<EnterPasswordModal> {
 
     if (isValid) {
       await firestoreService.updateLockSecureState(widget.lockId, false);
-      await firestoreService.saveAccess(widget.lockId, 'Acceso correcto');
+     // await firestoreService.saveAccess(widget.lockId, 'Acceso correcto');
       await lockController.restablecerIntentos(widget.lockId);
       Navigator.pop(context);
     } else {
-      await firestoreService.saveAccess(widget.lockId, 'Acceso fallido');
-      await lockController.registrarIntentoFallido(widget.lockId);
+      //await firestoreService.saveAccess(widget.lockId, 'Acceso fallido');
+      //await lockController.registrarIntentoFallido(widget.lockId);
       Navigator.pop(context);
 
     }

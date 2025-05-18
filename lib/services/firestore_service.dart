@@ -74,14 +74,6 @@ class FirestoreService {
         {'seguroActivo': seguroActivo});
   }
 
-  Stream<List<Map<String, dynamic>>> getAccessLogs() {
-    return _firestore
-        .collectionGroup('accessLogs')
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
-  }
-
   Stream<List<Map<String, dynamic>>> getLocksByUserStream(String userId) {
     return _firestore
         .collection('locks')
@@ -111,42 +103,10 @@ class FirestoreService {
 
   Stream<List<Map<String, dynamic>>> getAccessLogsByUser(String userId) {
     return _firestore
-        .collection('locks')
-        .where('createdBy', isEqualTo: userId)
+        .collection('accessLogs')
+        .where('userId', isEqualTo: userId)
         .snapshots()
-        .asyncExpand((locksSnapshot) {
-      final lockIds = locksSnapshot.docs.map((doc) => doc.id).toList();
-
-      if (lockIds.isEmpty) {
-        return Stream.value([]);
-      }
-
-      final List<Stream<List<Map<String, dynamic>>>> streams = lockIds.map((lockId) {
-        return _firestore
-            .collection('locks')
-            .doc(lockId)
-            .collection('accessLogs')
-            .orderBy('timestamp', descending: true)
-            .snapshots()
-            .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            final data = doc.data();
-            data['lockId'] = lockId;
-            return data;
-          }).toList();
-        });
-      }).toList();
-
-      return Rx.combineLatestList(streams).map((listOfLists) {
-        final allLogs = listOfLists.expand((logs) => logs).toList();
-        allLogs.sort((a, b) {
-          final tsA = (a['timestamp'] as Timestamp).toDate();
-          final tsB = (b['timestamp'] as Timestamp).toDate();
-          return tsB.compareTo(tsA);
-        });
-        return allLogs;
-      });
-    });
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
   Stream<List<Map<String, dynamic>>> streamLocksByUser(String userId) {
@@ -205,51 +165,79 @@ class FirestoreService {
       return null;
     });
   }
+  bool _registroEnProgreso = false;
 
-  Future<void> saveAccess(String lockId, String estado) async {
+  Future<void> registrarAccesoFallido(String lockId) async {
+    if (_registroEnProgreso) return;
+    _registroEnProgreso = true;
+
     try {
-      await FirebaseFirestore.instance
-          .collection('locks')
-          .doc(lockId)
-          .collection('accessLogs')
-          .add({
-        'estado': estado,
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      // Lógica de intentos
+      final doc = await FirebaseFirestore.instance.collection('locks').doc(lockId).get();
+      final data = doc.data();
+      if (data == null) return;
+
+      final bool modoPrueba = data['modoPrueba'] ?? false;
+      if (modoPrueba) return;
+
+      int intentos = data['intentos'] ?? 3;
+      final bloqueoActivo = data['bloqueoActivoIntentos'] ?? false;
+      if (bloqueoActivo) return;
+
+      intentos--;
+      if (intentos <= 0) {
+        await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
+          'bloqueoActivoIntentos': true,
+          'bloqueoTimestamp': Timestamp.now(),
+          'intentos': 0,
+        });
+      } else {
+        await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
+          'intentos': intentos,
+        });
+      }
+
+      // Registrar solo si pasó los checks anteriores
+      await FirebaseFirestore.instance.collection('accessLogs').add({
+        'lockId': lockId,
+        'userId': user.uid,
+        'access': false,
         'timestamp': FieldValue.serverTimestamp(),
       });
-      print('✅ Acceso guardado correctamente');
-    } catch (e) {
-      print('❌ Error al guardar el acceso: $e');
-    }
-  }
 
-  Future<void> registrarIntentoFallido(String lockId) async {
-    final docRef = FirebaseFirestore.instance.collection('locks').doc(lockId);
-    final doc = await docRef.get();
-
-    int intentos = doc.data()?['intentos'] ?? 3;
-    intentos = intentos - 1;
-
-    if (intentos <= 0) {
-      await docRef.update({
-        'intentos': 0,
-        'bloqueoActivoIntentos': true,
-        'bloqueoTimestamp': Timestamp.fromDate(DateTime.now().add(Duration(minutes: 5))),
-      });
-    } else {
-      await docRef.update({
-        'intentos': intentos,
-      });
+    } finally {
+      _registroEnProgreso = false;
     }
   }
 
   Future<void> registrarAccesoCorrecto(String lockId) async {
-    final docRef = FirebaseFirestore.instance.collection('locks').doc(lockId);
+    if (_registroEnProgreso) return;
+    _registroEnProgreso = true;
 
-    await docRef.update({
-      'intentos': 3,
-      'bloqueoActivoIntentos': false,
-      'bloqueoTimestamp': null,
-    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      await FirebaseFirestore.instance.collection('accessLogs').add({
+        'lockId': lockId,
+        'userId': user.uid,
+        'access': true,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      await FirebaseFirestore.instance.collection('locks').doc(lockId).update({
+        'intentos': 3,
+        'bloqueoActivoIntentos': false,
+        'bloqueoTimestamp': null,
+      });
+
+      print('✅ Acceso correcto registrado en accessLogs');
+    } finally {
+      _registroEnProgreso = false;
+    }
   }
 
   Future<List<Map<String, dynamic>>> getLocksByIp(String ip) async {
