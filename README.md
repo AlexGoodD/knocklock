@@ -1,6 +1,6 @@
 # KnockLock Flutter
 
-[English](#english) | [Español](#español)
+[English](#english) | [Español](#español) | [Resources/Recursos(#resources)]
 
 <a name="english"></a>
 # English
@@ -131,3 +131,7 @@ flutter run
 
 ## Licencia
 Este proyecto está licenciado bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
+
+<a name="resources"></a>
+# Resources/Recursos
+- [ESP32 Firmware Files / Archivos de Firmware ESP32](https://drive.google.com/drive/folders/1hEIRg0DyuILa7xbl14Ad2BMBcUrvuN0z?usp=share_link) - Download the firmware files needed for the ESP32 device / Descarga los archivos necesarios para el firmware del ESP32
