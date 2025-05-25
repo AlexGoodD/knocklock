@@ -403,6 +403,12 @@ class LockController {
         segurosActivosPorLock[lockId]!.value = nuevoEstado;
       }
 
+      if (nuevoEstado == true) {
+        _webSocketService.send("CERRADO");
+      } else {
+        _webSocketService.send("ABIERTO");
+      }
+
     } catch (e) {
     }
   }
@@ -629,6 +635,7 @@ class LockController {
         }
 
         if (hashedPasswordGuardada == hashedPasswordIngresada) {
+          _webSocketService.send("ACCESO_CONCEDIDO");
           return true;
         }
       }
