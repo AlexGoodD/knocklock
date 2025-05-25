@@ -1,6 +1,6 @@
 # KnockLock Flutter
 
-[English](#english) | [Español](#español) | [Resources/Recursos(#resources)]
+[English](#english) | [Español](#español) | [Resources/Recursos](#resources)
 
 <a name="english"></a>
 # English
